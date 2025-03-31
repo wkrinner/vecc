@@ -5,7 +5,7 @@ from flask import Flask, jsonify, send_from_directory, Response, render_template
 from flask_cors import CORS
 
 # Initialize the Flask application
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow frontend requests from any origin
 
 # Data directories

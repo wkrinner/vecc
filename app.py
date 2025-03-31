@@ -28,7 +28,12 @@ print("Timeseries Directory:", base_timeseries_dir)
 @app.route('/')
 def home():
     #return "Hello, Render!"
-    return render_template("index.html")  
+    return render_template("index.html") 
+
+@app.route("/check-files")
+def check_files():
+    files = os.listdir(geojson_dir)  # List files in geojson directory
+    return {"geojson_files": files} 
 
 @app.route("/subcatchments", methods=["GET"])
 def get_subcatchments():

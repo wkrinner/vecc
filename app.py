@@ -1,7 +1,7 @@
 import os
 import csv
 import json
-from flask import Flask, jsonify, send_from_directory, Response
+from flask import Flask, jsonify, send_from_directory, Response, render_template
 from flask_cors import CORS
 
 # Initialize the Flask application
@@ -15,7 +15,8 @@ base_timeseries_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\timeseries"
 
 @app.route('/')
 def home():
-    return "Hello, Render!"
+    #return "Hello, Render!"
+    return render_template("index.html")  # Ensure this matches your template folder
 
 @app.route("/subcatchments", methods=["GET"])
 def get_subcatchments():
@@ -139,5 +140,6 @@ def get_scenarios():
     #app.run(debug=True, port=5000)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    #port = int(os.environ.get('PORT', 5000))
+    #app.run(host='0.0.0.0', port=port)
+    app.run(host="0.0.0.0", port=10000, debug=True)

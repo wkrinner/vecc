@@ -16,7 +16,7 @@ base_timeseries_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\timeseries"
 @app.route('/')
 def home():
     #return "Hello, Render!"
-    return render_template("index.html")  # Ensure this matches your template folder
+    return render_template("index.html")  
 
 @app.route("/subcatchments", methods=["GET"])
 def get_subcatchments():

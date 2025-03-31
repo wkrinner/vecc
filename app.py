@@ -9,9 +9,21 @@ app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow frontend requests from any origin
 
 # Data directories
-geojson_dir = r"C:\Users\wkrin\DocsNonSync\vecc0-7\data\geojson"
-base_mapdata_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\mapdata"
-base_timeseries_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\timeseries"
+#geojson_dir = r"C:\Users\wkrin\DocsNonSync\vecc0-7\data\geojson"
+#base_mapdata_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\mapdata"
+#base_timeseries_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\timeseries"
+
+# Get the base directory where app.py is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Define new relative paths
+geojson_dir = os.path.join(BASE_DIR, "data", "geojson")
+base_mapdata_dir = os.path.join(BASE_DIR, "data", "mapdata")
+base_timeseries_dir = os.path.join(BASE_DIR, "data", "timeseries")
+
+print("GeoJSON Directory:", geojson_dir)  # Debugging: Check if paths are correct
+print("Map Data Directory:", base_mapdata_dir)
+print("Timeseries Directory:", base_timeseries_dir)
 
 @app.route('/')
 def home():

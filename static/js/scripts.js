@@ -79,7 +79,8 @@ function updateVisualization(){
 
 // Function to load geometry (GeoJSON)
 async function loadGeometry() {
-    const response = await fetch("http://127.0.0.1:5000/subcatchments");
+    //const response = await fetch("http://127.0.0.1:5000/subcatchments");
+    const response = await fetch("https://vecc.onrender.com/subcatchments");
     const geojsonData = await response.json();
 
     return new Promise((resolve) => {
@@ -109,7 +110,7 @@ async function updateColors(year) {
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/mapdata/${scenario}/${variable}/${year}`);
+        const response = await fetch(`https://vecc.onrender.com/mapdata/${scenario}/${variable}/${year}`);
         const mapData = await response.json();
 
         if (mapData.error) {
@@ -180,7 +181,7 @@ function updateTimeSeries() {
 // Function to load available years into dropdown
 async function loadYears() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/years');
+        const response = await fetch('https://vecc.onrender.com/years');
         if (!response.ok) {
             throw new Error("Failed to fetch years.");
         }
@@ -219,7 +220,7 @@ async function loadYears() {
 // Function to load available scenarios into dropdown
 async function loadScenarios() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/scenarios');
+        const response = await fetch('https://vecc.onrender.com/scenarios');
         if (!response.ok) {
             throw new Error("Failed to fetch scenarios.");
         }
@@ -258,7 +259,7 @@ async function loadScenarios() {
 // Function to load available variables into dropdown
 async function loadVariables() {
     try {
-        const response = await fetch('http://127.0.0.1:5000/variables');
+        const response = await fetch('https://vecc.onrender.com/variables');
         if (!response.ok) {
             throw new Error("Failed to fetch variables.");
         }
@@ -299,7 +300,7 @@ async function loadTimeSeriesData(sc_id) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
     try {
-        const response = await fetch(`http://127.0.0.1:5000/timeseries/${scenario}/${variable}/${sc_id}`);
+        const response = await fetch(`https://vecc.onrender.com/timeseries/${scenario}/${variable}/${sc_id}`);
         if (!response.ok){
             throw new Error("Time series data not found");
         }

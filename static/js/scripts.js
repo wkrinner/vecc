@@ -9,7 +9,7 @@ let selectedSubcatchment = null; // Store last clicked SC_ID
 
 // Define URL for fetch commands
 //const BASE_URL = "http://127.0.0.1:5000";
-const BASE_URL = "https://vecc.onrender.com";
+//const BASE_URL = "https://vecc.onrender.com";
 
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
@@ -84,7 +84,7 @@ function updateVisualization(){
 // Function to load geometry (GeoJSON)
 async function loadGeometry() {
     //const response = await fetch(`${BASE_URL}/subcatchments`);
-    const response = await fetch(`/subcatchments`);
+    const response = await fetch('/subcatchments');
     const geojsonData = await response.json();
 
     return new Promise((resolve) => {

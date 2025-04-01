@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Climate Scenarios Map Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <!--link rel="stylesheet" type="text/css" href="/static/css/styles.css"-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,14 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
 </head>
 <body>
-    <!--h2>Year:      Scenario:        Variable:</h2-->
-    <!--h2>Año:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Escenario:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variable:</h2>
-    <select id="yearSelector"></select>
-    <select id="scenarioSelector"></select>
-    <select id="variableSelector"></select-->
-    <!--div id="map" style="width: 800px; height: 500px; position: relative;"-->
     <div id="map" style="width: 100%; height: 95vh; margin: 0; border: none; overflow: hidden;">
-        <!-- Time series chart container -->
         <div id="chart-container" class="chart-container" style="display: none;">
             <button id="closeChartButton" class="close-chart-button">x</button>
             <canvas id="timeSeriesChart"></canvas>
@@ -32,7 +24,6 @@
             <select id="variableSelector"></select>
         </div>
     </div>
-    <!--script src="/static/js/scripts.js"></script-->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

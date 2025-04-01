@@ -7,10 +7,6 @@ let chart; // Store Chart.js instance
 
 let selectedSubcatchment = null; // Store last clicked SC_ID
 
-// Define URL for fetch commands
-//const BASE_URL = "http://127.0.0.1:5000";
-//const BASE_URL = "https://vecc.onrender.com";
-
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
 
@@ -20,8 +16,6 @@ function updateLegend(variable){
         let div = L.DomUtil.create("div", "legend");
         div.innerHTML = `<b>${variable.toUpperCase()} (mm)</b><br>`;
 
-        //let grades = [800, 900, 1000, 1100, 1200];
-        //let labels = ["< 800", "800 - 900", "900 - 1000", "1000 - 1100", "1100 - 1200", "> 1200"];
         let grades = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000];
         let labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", "1200-1300", "1300-1400", "1400-1500", "1500-1600", "1600-1700", "1700-1800", "1800-1900", "> 1900"];
 
@@ -83,7 +77,6 @@ function updateVisualization(){
 
 // Function to load geometry (GeoJSON)
 async function loadGeometry() {
-    //const response = await fetch(`${BASE_URL}/subcatchments`);
     const response = await fetch('/subcatchments');
     const geojsonData = await response.json();
 
@@ -114,7 +107,6 @@ async function updateColors(year) {
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
 
     try {
-        //const response = await fetch(`${BASE_URL}/mapdata/${scenario}/${variable}/${year}`);
         const response = await fetch(`/mapdata/${scenario}/${variable}/${year}`);
         const mapData = await response.json();
 
@@ -186,7 +178,6 @@ function updateTimeSeries() {
 // Function to load available years into dropdown
 async function loadYears() {
     try {
-        //const response = await fetch('${BASE_URL}/years');
         const response = await fetch('/years');
         if (!response.ok) {
             throw new Error("Failed to fetch years.");
@@ -226,7 +217,6 @@ async function loadYears() {
 // Function to load available scenarios into dropdown
 async function loadScenarios() {
     try {
-        //const response = await fetch('${BASE_URL}/scenarios');
         const response = await fetch('/scenarios');
         if (!response.ok) {
             throw new Error("Failed to fetch scenarios.");
@@ -266,7 +256,6 @@ async function loadScenarios() {
 // Function to load available variables into dropdown
 async function loadVariables() {
     try {
-        //const response = await fetch('${BASE_URL}/variables');
         const response = await fetch('/variables');
         if (!response.ok) {
             throw new Error("Failed to fetch variables.");
@@ -308,7 +297,6 @@ async function loadTimeSeriesData(sc_id) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
     try {
-        //const response = await fetch(`${BASE_URL}/timeseries/${scenario}/${variable}/${sc_id}`);
         const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}`);
         if (!response.ok){
             throw new Error("Time series data not found");

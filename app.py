@@ -5,18 +5,14 @@ from flask import Flask, jsonify, send_from_directory, Response, render_template
 from flask_cors import CORS
 
 # Initialize the Flask application
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow frontend requests from any origin
 
-# Data directories
-#geojson_dir = r"C:\Users\wkrin\DocsNonSync\vecc0-7\data\geojson"
-#base_mapdata_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\mapdata"
-#base_timeseries_dir = fr"C:\Users\wkrin\DocsNonSync\vecc0-7\data\timeseries"
 
 # Get the base directory where app.py is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Define new relative paths
+# Define new relative paths for data directories
 geojson_dir = os.path.join(BASE_DIR, "data", "geojson")
 base_mapdata_dir = os.path.join(BASE_DIR, "data", "mapdata")
 base_timeseries_dir = os.path.join(BASE_DIR, "data", "timeseries")
@@ -27,7 +23,6 @@ print("Timeseries Directory:", base_timeseries_dir)
 
 @app.route('/')
 def home():
-    #return "Hello, Render!"
     return render_template("index.html") 
 
 @app.route("/check-files")
@@ -153,10 +148,5 @@ def get_scenarios():
     scenarios = ["ssp126", "ssp585"]
     return jsonify(scenarios)
 
-#if __name__ == "__main__":
-    #app.run(debug=True, port=5000)
-
 if __name__ == '__main__':
-    #port = int(os.environ.get('PORT', 5000))
-    #app.run(host='0.0.0.0', port=port)
     app.run(host="0.0.0.0", port=10000, debug=True)

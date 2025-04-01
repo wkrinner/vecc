@@ -7,6 +7,10 @@ let chart; // Store Chart.js instance
 
 let selectedSubcatchment = null; // Store last clicked SC_ID
 
+// Define URL for fetch commands
+//const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = "https://vecc.onrender.com";
+
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
 
@@ -79,8 +83,8 @@ function updateVisualization(){
 
 // Function to load geometry (GeoJSON)
 async function loadGeometry() {
-    //const response = await fetch("http://127.0.0.1:5000/subcatchments");
-    const response = await fetch("https://vecc.onrender.com/subcatchments");
+    //const response = await fetch(`${BASE_URL}/subcatchments`);
+    const response = await fetch(`/subcatchments`);
     const geojsonData = await response.json();
 
     return new Promise((resolve) => {
@@ -110,7 +114,8 @@ async function updateColors(year) {
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
 
     try {
-        const response = await fetch(`https://vecc.onrender.com/mapdata/${scenario}/${variable}/${year}`);
+        //const response = await fetch(`${BASE_URL}/mapdata/${scenario}/${variable}/${year}`);
+        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}`);
         const mapData = await response.json();
 
         if (mapData.error) {
@@ -181,7 +186,8 @@ function updateTimeSeries() {
 // Function to load available years into dropdown
 async function loadYears() {
     try {
-        const response = await fetch('https://vecc.onrender.com/years');
+        //const response = await fetch('${BASE_URL}/years');
+        const response = await fetch('/years');
         if (!response.ok) {
             throw new Error("Failed to fetch years.");
         }
@@ -220,7 +226,8 @@ async function loadYears() {
 // Function to load available scenarios into dropdown
 async function loadScenarios() {
     try {
-        const response = await fetch('https://vecc.onrender.com/scenarios');
+        //const response = await fetch('${BASE_URL}/scenarios');
+        const response = await fetch('/scenarios');
         if (!response.ok) {
             throw new Error("Failed to fetch scenarios.");
         }
@@ -259,7 +266,8 @@ async function loadScenarios() {
 // Function to load available variables into dropdown
 async function loadVariables() {
     try {
-        const response = await fetch('https://vecc.onrender.com/variables');
+        //const response = await fetch('${BASE_URL}/variables');
+        const response = await fetch('/variables');
         if (!response.ok) {
             throw new Error("Failed to fetch variables.");
         }
@@ -300,7 +308,8 @@ async function loadTimeSeriesData(sc_id) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
     try {
-        const response = await fetch(`https://vecc.onrender.com/timeseries/${scenario}/${variable}/${sc_id}`);
+        //const response = await fetch(`${BASE_URL}/timeseries/${scenario}/${variable}/${sc_id}`);
+        const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}`);
         if (!response.ok){
             throw new Error("Time series data not found");
         }

@@ -10,6 +10,8 @@ let selectedSubcatchment = null; // Store last clicked SC_ID
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
 
+let additionalLayer_rios;
+
 // Update the legend content based on the selected variable
 function updateLegend(variable){
     legend.onAdd = function (map) {
@@ -500,6 +502,117 @@ document.addEventListener("DOMContentLoaded", () => {
     updateColors(selectedYear);
 });
 */
+
+document.getElementById("toggleLayerRios").addEventListener("change", async function (rios) {
+  if (rios.target.checked) {
+    // Fetch GeoJSON from the Flask backend
+    const response = await fetch("/layer_rios");
+    const data = await response.json();
+
+    // Add GeoJSON layer to the map
+    Layer_rios = L.geoJSON(data, {
+      style: { color: "blue", weight: 1.2, opacity: 0.8 },
+      onEachFeature: (feature, layer) => {
+        if (feature.properties && feature.properties.name) {
+          layer.bindPopup(feature.properties.name);
+        }
+      }
+
+    }).addTo(map);
+  } else {
+    if (map.hasLayer(Layer_rios)) {
+      map.removeLayer(Layer_rios);
+    }
+  }
+});
+
+document.getElementById("toggleLayerDepartamentos").addEventListener("change", async function (depa) {
+    if (depa.target.checked) {
+      // Fetch GeoJSON from the Flask backend
+      const response = await fetch("/layer_departamentos");
+      const data = await response.json();
+  
+      // Add GeoJSON layer to the map
+      Layer_departamentos = L.geoJSON(data, {
+        style: { color: "black", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties && feature.properties.name) {
+            layer.bindPopup(feature.properties.name);
+          }
+        }
+      }).addTo(map);
+    } else {
+      if (map.hasLayer(Layer_departamentos)) {
+        map.removeLayer(Layer_departamentos);
+      }
+    }
+});
+
+document.getElementById("toggleLayerRepresas").addEventListener("change", async function (represas) {
+    if (represas.target.checked) {
+      // Fetch GeoJSON from the Flask backend
+      const response = await fetch("/layer_represas");
+      const data = await response.json();
+  
+      // Add GeoJSON layer to the map
+      Layer_represas = L.geoJSON(data, {
+        style: { color: "black", weight: 1.2, opacity: 0.8},
+        pointToLayer: function (feature, latlng) {
+            // Create a red triangle as the symbol
+            return L.marker(latlng, {
+              icon: L.divIcon({
+                className: 'custom-triangle',
+                html: '<div class="triangle"></div>', // This creates the triangle shape
+                iconSize: [10, 10], // Size of the triangle (you can adjust this)
+              })
+            });
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties && feature.properties.name) {
+            layer.bindPopup(feature.properties.name);
+          }
+        }
+      }).addTo(map);
+      /*var Layer_represas = L.geoJSON(data, {
+        pointToLayer: function(feature, latlng) {
+          return L.marker(latlng, {
+            icon: L.divIcon({
+              className: 'custom-triangle', // This will apply your custom style
+              html: '<div class="triangle"></div>', // This adds the triangle shape
+              iconSize: [10, 10], // Set the size of the triangle
+            })
+          });
+        }
+      }).addTo(map);*/
+    } else {
+      if (map.hasLayer(Layer_represas)) {
+        map.removeLayer(Layer_represas);
+      }
+    }
+});
+
+document.getElementById("toggleLayerFuentes").addEventListener("change", async function (fuentes) {
+    if (fuentes.target.checked) {
+      // Fetch GeoJSON from the Flask backend
+      const response = await fetch("/layer_fuentes");
+      const data = await response.json();
+  
+      // Add GeoJSON layer to the map
+      Layer_fuentes = L.geoJSON(data, {
+        style: { color: "black", weight: 1.2, opacity: 0.8 },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties && feature.properties.name) {
+            layer.bindPopup(feature.properties.name);
+          }
+        }
+      }).addTo(map);
+    } else {
+      if (map.hasLayer(Layer_fuentes)) {
+        map.removeLayer(Layer_fuentes);
+      }
+    }
+});
+
 loadGeometry();  // Load geometry (subcatchments) initially
 loadYears();  // Populate the dropdown with years
 

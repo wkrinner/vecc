@@ -51,7 +51,7 @@ async function initializeApp() {
 // Call the initialization function after defining it
 initializeApp();
 
-// Event listeners for year, scenario and variable selection change (to update map and chart)
+// Event listeners for year, scenario and variable selection change (to update map, chart and legend)
 document.getElementById("yearSelector").addEventListener("change", (event) => {
     updateColors(event.target.value);
 });
@@ -151,7 +151,7 @@ function getColor(value) {
                           '#990808';  // Deep red
 }
 
-// Function to update tome series chart
+/*// Function to update time series chart   NOT NEEDED
 function updateTimeSeries() {
     const scenario = document.getElementById("scenarioSelector").value;
     const variable = document.getElementById("variableSelector").value;
@@ -174,7 +174,7 @@ function updateTimeSeries() {
         })
         .catch(error => console.error("Error fetching time series data:", error));
 }
-
+*/
 // Function to load available years into dropdown
 async function loadYears() {
     try {
@@ -318,7 +318,7 @@ async function loadTimeSeriesData(sc_id) {
 
 // Function to show time series chart
 function showChart() {
-    const chartContainer = document.getElementById("chart-container");
+    const chartContainer = document.getElementById("chartContainer");
     if (chartContainer) {
         chartContainer.style.display = "block";
         console.log("Chart container shown:", chartContainer.style.display);
@@ -334,8 +334,8 @@ function showChart() {
         console.error('Chart container not found!');
     }
 
-    document.getElementById("chart-container").style.display = "block";
-    console.log("Chart container shown:", document.getElementById("chart-container").style.display); // Debugging log
+    document.getElementById("chartContainer").style.display = "block";
+    console.log("Chart container shown:", document.getElementById("chartContainer").style.display); // Debugging log
 
     // Make sure the "x" button is visible 
     const closeButton = document.getElementById("closeChartButton");
@@ -344,7 +344,7 @@ function showChart() {
 
 // Function to hide the chart
 function closeChart() {
-    const chartContainer = document.getElementById("chart-container");
+    const chartContainer = document.getElementById("chartContainer");
     chartContainer.style.display = "none";
 
     // Optionally destroy the chart to free resources
@@ -382,7 +382,7 @@ function parseCSV(csvData) {
 
 // Function to render the time series chart using Chart.js
 function renderChart(data, sc_id) {
-    const canvasContainer = document.getElementById('chart-container');
+    const canvasContainer = document.getElementById('chartContainer');
 
     // Clear only the canvas, preserving the close button
     const oldCanvas = document.getElementById('timeSeriesChart');
@@ -490,16 +490,16 @@ function renderChart(data, sc_id) {
 
 // Update the legend when the variable selector changes
 document.getElementById("variableSelector").addEventListener("change", function() {
-    //legend.remove();  // Remove the old legend
+    //legend.remove();  // Remove the old legend     NOT NEEDED
     legend.addTo(map);
 });
 
-// Ensure the map loads with colors
+/*// Ensure the map loads with colors     NOT NEEDED
 document.addEventListener("DOMContentLoaded", () => {
     const selectedYear = document.getElementById("yearSelector").value;
     updateColors(selectedYear);
 });
-
+*/
 loadGeometry();  // Load geometry (subcatchments) initially
 loadYears();  // Populate the dropdown with years
 

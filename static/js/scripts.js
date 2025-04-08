@@ -563,7 +563,7 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
               icon: L.divIcon({
                 className: 'custom-triangle',
                 html: '<div class="triangle"></div>', // This creates the triangle shape
-                iconSize: [10, 10], // Size of the triangle (you can adjust this)
+                iconSize: [10, 10], 
               })
             });
         },
@@ -573,17 +573,6 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
           }
         }
       }).addTo(map);
-      /*var Layer_represas = L.geoJSON(data, {
-        pointToLayer: function(feature, latlng) {
-          return L.marker(latlng, {
-            icon: L.divIcon({
-              className: 'custom-triangle', // This will apply your custom style
-              html: '<div class="triangle"></div>', // This adds the triangle shape
-              iconSize: [10, 10], // Set the size of the triangle
-            })
-          });
-        }
-      }).addTo(map);*/
     } else {
       if (map.hasLayer(Layer_represas)) {
         map.removeLayer(Layer_represas);

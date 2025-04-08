@@ -17,7 +17,8 @@ geojson_dir = os.path.join(BASE_DIR, "data", "geojson")
 base_mapdata_dir = os.path.join(BASE_DIR, "data", "mapdata")
 base_timeseries_dir = os.path.join(BASE_DIR, "data", "timeseries")
 
-print("GeoJSON Directory:", geojson_dir)  # Debugging: Check if paths are correct
+# Debugging: Check if paths are correct
+print("GeoJSON Directory:", geojson_dir)  
 print("Map Data Directory:", base_mapdata_dir)
 print("Timeseries Directory:", base_timeseries_dir)
 

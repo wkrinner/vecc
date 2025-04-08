@@ -18,12 +18,38 @@
             <canvas id="timeSeriesChart"></canvas>
         </div>
         <div class="controls">
-            <h2>Año: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Escenario: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variable:</h2>
-            <select id="yearSelector"></select>
-            <select id="scenarioSelector"></select>
-            <select id="variableSelector"></select>
-        </div>
-    </div>
+            <div>
+                <label for="yearSelector">Año:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <select id="yearSelector"></select>
+            </div>
+            <div>
+                <label for="scenarioSelector">Escenario:</label>
+                <select id="scenarioSelector"></select>
+            </div>
+            <div>
+                <label for="variableSelector">Variable:&nbsp;&nbsp;&nbsp;</label>
+                <select id="variableSelector"></select>
+            </div>
+            <hr>
+            <h4>Capas:</h4> 
+            <div>
+                <label for="toggleLayerRios">Rios &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <input type="checkbox" id="toggleLayerRios">
+            </div>
+            <div>
+                <label for="toggleLayerDepartamentos">Departamentos </label>
+                <input type="checkbox" id="toggleLayerDepartamentos">
+            </div>
+            <div>
+                <label for="toggleLayerRepresas">Represas &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <input type="checkbox" id="toggleLayerRepresas">
+            </div>
+            <div>
+                <label for="toggleLayerFuentes">Fuentes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <input type="checkbox" id="toggleLayerFuentes">
+            </div>
+        </div>    
+    </div>    
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

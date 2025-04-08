@@ -149,5 +149,29 @@ def get_scenarios():
     scenarios = ["ssp126", "ssp585"]
     return jsonify(scenarios)
 
+@app.route("/layer_rios", methods=["GET"])
+def get_additional_layer_rios():
+    """Serve a GeoJSON layer for rivers"""
+    print("Request received for GeoJSON layer rios")
+    return send_from_directory(geojson_dir, "rios.geojson")
+
+@app.route("/layer_departamentos", methods=["GET"])
+def get_layer_departamentos():
+    """Serve a GeoJSON layer for departamentos"""
+    print("Request received for GeoJSON layer departamentos")
+    return send_from_directory(geojson_dir, "departamentos.geojson")
+
+@app.route("/layer_represas", methods=["GET"])
+def get_layer_represas():
+    """Serve a GeoJSON layer for represas"""
+    print("Request received for GeoJSON layer represas")
+    return send_from_directory(geojson_dir, "represas.geojson")
+
+@app.route("/layer_fuentes", methods=["GET"])
+def get_layer_fuentes():
+    """Serve a GeoJSON layer for fuentes"""
+    print("Request received for GeoJSON layer fuentes")
+    return send_from_directory(geojson_dir, "fuentes.geojson")
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=10000, debug=True)

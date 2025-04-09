@@ -395,6 +395,7 @@ function renderChart(data, sc_id) {
     // Create a new canvas element
     const newCanvas = document.createElement('canvas');
     newCanvas.id = 'timeSeriesChart';
+    newCanvas.className = 'chart-font'; 
     canvasContainer.appendChild(newCanvas);
 
     const ctx = newCanvas.getContext('2d');
@@ -403,6 +404,8 @@ function renderChart(data, sc_id) {
     if (chart) {
         chart.destroy();
     }
+    // Get computed font size from CSS
+    const computedFontSize = parseFloat(getComputedStyle(newCanvas).fontSize) || 12;
 
     // Get the selected variable and scenario
     const variable = document.getElementById("variableSelector").value;  
@@ -450,7 +453,7 @@ function renderChart(data, sc_id) {
                     display: true,
                     text: `Escenario: ${scenario.toUpperCase()}  -  Subcuenca: ${sc_id ? sc_id : 'Unknown'}`, // Fallback if sc_id is undefined
                     font: {
-                        size: 12,
+                        size: computedFontSize,
                         weight: 'normal'
                     },
                     padding: {
@@ -463,7 +466,7 @@ function renderChart(data, sc_id) {
                         usePointStyle: true, // Use line style in legend instead of boxes
                         boxWidth: 40,  // Adjust line length in legend
                         font: {
-                            size: 11
+                            size: computedFontSize*.9
                         }
                     }
                 }
@@ -475,14 +478,27 @@ function renderChart(data, sc_id) {
                         unit: 'year',
                         tooltipFormat: 'YYYY'
                     },
+                    ticks: {
+                        font: {
+                            size: computedFontSize
+                        }
+                    },
                     title: {
-                        display: false  // Remove axis title "Date"
+                        display: false
                     }
                 },
                 y: {
+                    ticks: {
+                        font: {
+                            size: computedFontSize
+                        }
+                    },
                     title: {
                         display: true,
-                        text: `${variable.toUpperCase()} (mm)`,                        
+                        text: `${variable.toUpperCase()} (mm)`,
+                        font: {
+                            size: computedFontSize
+                        }                        
                     }
                 }
             }
@@ -496,13 +512,7 @@ document.getElementById("variableSelector").addEventListener("change", function(
     legend.addTo(map);
 });
 
-/*// Ensure the map loads with colors     NOT NEEDED
-document.addEventListener("DOMContentLoaded", () => {
-    const selectedYear = document.getElementById("yearSelector").value;
-    updateColors(selectedYear);
-});
-*/
-
+// Checkboxes to show additional layers
 document.getElementById("toggleLayerRios").addEventListener("change", async function (rios) {
   if (rios.target.checked) {
     // Fetch GeoJSON from the Flask backend
@@ -517,13 +527,34 @@ document.getElementById("toggleLayerRios").addEventListener("change", async func
           layer.bindPopup(feature.properties.name);
         }
       }
-
     }).addTo(map);
   } else {
     if (map.hasLayer(Layer_rios)) {
       map.removeLayer(Layer_rios);
     }
   }
+});
+
+document.getElementById("toggleLayerCarreteras").addEventListener("change", async function (carreteras) {
+    if (carreteras.target.checked) {
+        // Fetch GeoJSON from the Flask backend
+        const response = await fetch("/layer_carreteras");
+        const data = await response.json();
+
+        // Add GeoJSON layer to the map  
+        Layer_carreteras = L.geoJSON(data, {
+            style: { color: "red", weight: 1.2, opacity: 0.8 },
+            onEachFeature: (feature, layer) => {
+                if (feature.properties && feature.properties.name) {
+                    layer.bindPopup(feature.properties.name);
+                }
+            }
+        }).addTo(map);
+    } else {
+      if (map.hasLayer(Layer_carreteras)) {
+        map.removeLayer(Layer_carreteras);
+      }
+    }
 });
 
 document.getElementById("toggleLayerDepartamentos").addEventListener("change", async function (depa) {
@@ -548,6 +579,28 @@ document.getElementById("toggleLayerDepartamentos").addEventListener("change", a
     }
 });
 
+document.getElementById("toggleLayerAAA").addEventListener("change", async function (aaa) {
+    if (aaa.target.checked) {
+        // Fetch GeoJSON from the Flask backend
+        const response = await fetch("/layer_AAA");
+        const data = await response.json();
+
+        // Add GeoJSON layer to the map  
+        Layer_AAA = L.geoJSON(data, {
+            style: { color: "purple", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
+            onEachFeature: (feature, layer) => {
+                if (feature.properties && feature.properties.name) {
+                    layer.bindPopup(feature.properties.name);
+                }
+            }
+        }).addTo(map);
+    } else {
+      if (map.hasLayer(Layer_AAA)) {
+        map.removeLayer(Layer_AAA);
+      }
+    }
+});
+
 document.getElementById("toggleLayerRepresas").addEventListener("change", async function (represas) {
     if (represas.target.checked) {
       // Fetch GeoJSON from the Flask backend
@@ -558,12 +611,12 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
       Layer_represas = L.geoJSON(data, {
         style: { color: "black", weight: 1.2, opacity: 0.8},
         pointToLayer: function (feature, latlng) {
-            // Create a red triangle as the symbol
             return L.marker(latlng, {
               icon: L.divIcon({
-                className: 'custom-triangle',
-                html: '<div class="triangle"></div>', // This creates the triangle shape
-                iconSize: [10, 10], 
+                className: 'trapezoid-marker',
+                html: '<div class="trapezoid"></div>', 
+                iconSize: [8, 15],
+                iconAnchor: [0, 0] 
               })
             });
         },

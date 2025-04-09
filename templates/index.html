@@ -18,34 +18,41 @@
             <canvas id="timeSeriesChart"></canvas>
         </div>
         <div class="controls">
-            <div>
-                <label for="yearSelector">Año:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <div class="dropdown-row">
+                <label for="yearSelector">Año:</label>
                 <select id="yearSelector"></select>
             </div>
-            <div>
+            <div class="dropdown-row">
                 <label for="scenarioSelector">Escenario:</label>
                 <select id="scenarioSelector"></select>
             </div>
-            <div>
-                <label for="variableSelector">Variable:&nbsp;&nbsp;&nbsp;</label>
+            <div class="dropdown-row">
+                <label for="variableSelector">Variable:</label>
                 <select id="variableSelector"></select>
             </div>
-            <hr>
             <h4>Capas:</h4> 
-            <div>
-                <label for="toggleLayerRios">Rios &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <div class="layer-option">
+                <label for="toggleLayerRios">Rios</label>
                 <input type="checkbox" id="toggleLayerRios">
             </div>
-            <div>
+            <div class="layer-option">
+                <label for="toggleLayerCarreteras">Carreteras</label>
+                <input type="checkbox" id="toggleLayerCarreteras">
+            </div>                     
+            <div class="layer-option">
                 <label for="toggleLayerDepartamentos">Departamentos </label>
                 <input type="checkbox" id="toggleLayerDepartamentos">
             </div>
-            <div>
-                <label for="toggleLayerRepresas">Represas &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <div class="layer-option">
+                <label for="toggleLayerAAA">AAA</label>
+                <input type="checkbox" id="toggleLayerAAA">
+            </div>
+            <div class="layer-option">
+                <label for="toggleLayerRepresas">Represas</label>
                 <input type="checkbox" id="toggleLayerRepresas">
             </div>
-            <div>
-                <label for="toggleLayerFuentes">Fuentes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <div class="layer-option">
+                <label for="toggleLayerFuentes">Fuentes</label>
                 <input type="checkbox" id="toggleLayerFuentes">
             </div>
         </div>    

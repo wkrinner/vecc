@@ -155,11 +155,23 @@ def get_additional_layer_rios():
     print("Request received for GeoJSON layer rios")
     return send_from_directory(geojson_dir, "rios.geojson")
 
+@app.route("/layer_carreteras", methods=["GET"])
+def get_additional_layer_carreteras():
+    """Serve a GeoJSON layer for carreteras"""
+    print("Request received for GeoJSON layer carreteras")
+    return send_from_directory(geojson_dir, "carreteras.geojson")
+
 @app.route("/layer_departamentos", methods=["GET"])
 def get_layer_departamentos():
     """Serve a GeoJSON layer for departamentos"""
     print("Request received for GeoJSON layer departamentos")
     return send_from_directory(geojson_dir, "departamentos.geojson")
+
+@app.route("/layer_AAA", methods=["GET"])
+def get_layer_AAA():
+    """Serve a GeoJSON layer for AAA"""
+    print("Request received for GeoJSON layer AAA")
+    return send_from_directory(geojson_dir, "aaa.geojson")
 
 @app.route("/layer_represas", methods=["GET"])
 def get_layer_represas():

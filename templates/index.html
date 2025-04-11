@@ -30,9 +30,13 @@
                 <label for="variableSelector">Variable:</label>
                 <select id="variableSelector"></select>
             </div>
+            <div class="dropdown-row">
+                <label for="seasonSelector">Estación:</label>
+                <select id="seasonSelector"></select>
+            </div>
             <h4>Capas:</h4> 
             <div class="layer-option">
-                <label for="toggleLayerRios">Rios</label>
+                <label for="toggleLayerRios">Ríos</label>
                 <input type="checkbox" id="toggleLayerRios">
             </div>
             <div class="layer-option">
@@ -44,7 +48,7 @@
                 <input type="checkbox" id="toggleLayerDepartamentos">
             </div>
             <div class="layer-option">
-                <label for="toggleLayerAAA">AAA</label>
+                <label for="toggleLayerAAA">Ámbitos AAA</label>
                 <input type="checkbox" id="toggleLayerAAA">
             </div>
             <div class="layer-option">
@@ -55,7 +59,12 @@
                 <label for="toggleLayerFuentes">Fuentes</label>
                 <input type="checkbox" id="toggleLayerFuentes">
             </div>
-        </div>    
+        </div>
+        <!--div class="type-selector">
+            <label for="typeSelector">Tipo de dato:</label>
+            <select id="typeSelector"></select>
+        </div-->
+        <div id="typeSelector" class="type-selector"></div>
     </div>    
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>

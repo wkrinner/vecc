@@ -6,6 +6,7 @@ let subcatchmentsLayer; // Store geometry
 let chart; // Store Chart.js instance
 
 let selectedSubcatchment = null; // Store last clicked SC_ID
+let currentType = "abs"; // default data type
 
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
@@ -37,23 +38,26 @@ async function initializeApp() {
     await loadYears();    // Populate years in dropdown
     await loadScenarios(); // Populate scenarios in dropdown
     await loadVariables(); // Populate variables in dropdown
+    await loadTypes(); // Populate data types in dropdown
 
     // Define default values for dropdowns 
     document.getElementById("yearSelector").value = "2025";
     document.getElementById("scenarioSelector").value = "ssp585";
     document.getElementById("variableSelector").value = "pr";
+    document.getElementById("typeSelector").value = "abs";
 
     // Update the legend based on the initial selected variable
     updateLegend("pr");  // This updates the legend with the initial variable
 
     // Ensure the colors are updated for the first load
     await updateColors("2025");
+
 }
 
 // Call the initialization function after defining it
 initializeApp();
 
-// Event listeners for year, scenario and variable selection change (to update map, chart and legend)
+// Event listeners for year, scenario, variable and data type selection change (to update map, chart and legend)
 document.getElementById("yearSelector").addEventListener("change", (event) => {
     updateColors(event.target.value);
 });
@@ -62,6 +66,10 @@ document.getElementById("scenarioSelector").addEventListener("change", () => {
 });
 document.getElementById("variableSelector").addEventListener("change", (event) => {
     updateLegend(event.target.value); // Update legend when variable changes
+    updateVisualization();
+});
+document.getElementById("typeSelector").addEventListener("change", (event) => {
+    //updateLegend(variable); // Update legend when variable changes
     updateVisualization();
 });
 
@@ -107,9 +115,12 @@ async function loadGeometry() {
 async function updateColors(year) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
+    //const type = document.getElementById("typeSelector").value;  // Get selected data type
+    const activeTypeButton = document.querySelector(".type-button.active");
+    const type = activeTypeButton ? activeTypeButton.dataset.value : "abs";
 
     try {
-        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}`);
+        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}/${type}`);
         const mapData = await response.json();
 
         if (mapData.error) {
@@ -238,7 +249,7 @@ async function loadScenarios() {
         scenarios.forEach(scenario => {
             const option = document.createElement("option");
             option.value = scenario;
-            option.textContent = scenario;
+            option.textContent = scenario.toUpperCase();
             selector.appendChild(option);
         });
 
@@ -277,7 +288,7 @@ async function loadVariables() {
         variables.forEach(variable => {
             const option = document.createElement("option");
             option.value = variable;
-            option.textContent = variable;
+            option.textContent = variable.toUpperCase();
             selector.appendChild(option);
         });
 
@@ -291,6 +302,119 @@ async function loadVariables() {
 
     } catch (error) {
         console.error("Error loading variables:", error);
+    }
+}
+
+// Function to load available data types 
+/*const typeLabels = {
+    abs: "Valor absoluto",
+    dif: "Variación",
+    pct: "Variación%"
+};*/
+async function loadTypes() {
+    const typeLabels = { // new location, before outside function 
+        abs: "Valor absoluto",
+        dif: "Variación",
+        pct: "Variación%"
+    }
+    try {
+        const response = await fetch('/types');
+        if (!response.ok) {
+            throw new Error("Failed to fetch types.");
+        }
+
+        const types = await response.json();
+        console.log("Types:", loadTypes);  // Debugging Log
+
+        //const selector = document.getElementById("typeSelector");
+        //selector.innerHTML = "";  // Clear previous options
+        const container = document.getElementById("typeSelector"); // new, before selector
+        container.innerHTML = "";  // Clear existing buttons
+
+        if (types.length === 0) {
+            console.warn("No types found!");
+            return;
+        }
+
+        types.forEach(type => {
+            /*const option = document.createElement("option");
+            option.value = type;
+            option.textContent = typeLabels[type] || type;
+            selector.appendChild(option);*/
+            const button = document.createElement("button");  // new, before option
+            button.textContent = typeLabels[type] || type;
+            button.className = "type-button";
+            button.dataset.value = type;
+
+            button.addEventListener("click", () => {  // new section
+                document.querySelectorAll(".type-button").forEach(btn =>
+                    btn.classList.remove("active")
+                );
+                button.classList.add("active");
+                updateVisualization();  // or updateColors(...) if you prefer
+            });
+
+            container.appendChild(button);  // new
+        });
+
+        // Set default type to abs if available, otherwise use the first available type
+        const defaultType = types.includes("abs") ? "abs" : types[0];
+        //selector.value = defaultType;
+        const defaultButton = [...container.children].find(btn => btn.dataset.value === defaultType);  // new
+        if (defaultButton) defaultButton.classList.add("active");
+
+        console.log(`Loading initial data for type: ${defaultType}`);
+
+        await updateColors(defaultType);  // Ensure colors load only after type is set
+
+    } catch (error) {
+        console.error("Error loading types:", error);
+    }
+}
+
+// Function to load available seasons into dropdown
+const seasonLabels = {
+    ann: "Año completo",
+    pri: "Primavera",
+    ver: "Verano",
+    oto: "Otoño",
+    inv: "Invierno"
+};
+async function loadSeasons() {
+    try {
+        const response = await fetch('/seasons');
+        if (!response.ok) {
+            throw new Error("Failed to fetch seasons.");
+        }
+
+        const seasons = await response.json();
+        console.log("Seasons:", loadSeasons);  // Debugging Log
+
+        const selector = document.getElementById("seasonSelector");
+        selector.innerHTML = "";  // Clear previous options
+
+        if (season.length === 0) {
+            console.warn("No seasons found!");
+            return;
+        }
+
+        seasons.forEach(season => {
+            const option = document.createElement("option");
+            option.value = season;
+            option.textContent = seasonLabels[season] || season;
+            selector.appendChild(option);
+        });
+
+        // Set default season to ann if available, otherwise use the first available season
+        const defaultSeason = seasons.includes("ann") ? "ann" : seasons[0];
+        selector.value = defaultSeason;
+
+        console.log(`Loading initial data for season: ${defaultSeason}`);
+
+        await updateColors(defaultSeason);  // Ensure colors load only after season is set
+
+    } catch (error) {
+        console.error("Error loading seasons:", error);
     }
 }
 
@@ -417,7 +541,7 @@ function renderChart(data, sc_id) {
             labels: data.dates,
             datasets: [
                 {
-                    label: 'Mediano',
+                    label: 'Mediana',
                     data: data.medians,
                     borderColor: 'blue',
                     borderWidth: 1,
@@ -512,7 +636,7 @@ document.getElementById("variableSelector").addEventListener("change", function(
     legend.addTo(map);
 });
 
-// Checkboxes to show additional layers
+// Checkbox to show additional layer "Ríos"
 document.getElementById("toggleLayerRios").addEventListener("change", async function (rios) {
   if (rios.target.checked) {
     // Fetch GeoJSON from the Flask backend
@@ -535,6 +659,7 @@ document.getElementById("toggleLayerRios").addEventListener("change", async func
   }
 });
 
+// Additional layer "Carreteras"
 document.getElementById("toggleLayerCarreteras").addEventListener("change", async function (carreteras) {
     if (carreteras.target.checked) {
         // Fetch GeoJSON from the Flask backend
@@ -557,6 +682,7 @@ document.getElementById("toggleLayerCarreteras").addEventListener("change", asyn
     }
 });
 
+// Additional layer "Departamentos"
 document.getElementById("toggleLayerDepartamentos").addEventListener("change", async function (depa) {
     if (depa.target.checked) {
       // Fetch GeoJSON from the Flask backend
@@ -579,6 +705,7 @@ document.getElementById("toggleLayerDepartamentos").addEventListener("change", a
     }
 });
 
+// Additional layer "Ámbitos AAA"
 document.getElementById("toggleLayerAAA").addEventListener("change", async function (aaa) {
     if (aaa.target.checked) {
         // Fetch GeoJSON from the Flask backend
@@ -601,6 +728,7 @@ document.getElementById("toggleLayerAAA").addEventListener("change", async funct
     }
 });
 
+// Additional layer "Represas"
 document.getElementById("toggleLayerRepresas").addEventListener("change", async function (represas) {
     if (represas.target.checked) {
       // Fetch GeoJSON from the Flask backend
@@ -633,6 +761,7 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
     }
 });
 
+// Additional layer "Fuentes"
 document.getElementById("toggleLayerFuentes").addEventListener("change", async function (fuentes) {
     if (fuentes.target.checked) {
       // Fetch GeoJSON from the Flask backend
@@ -641,7 +770,17 @@ document.getElementById("toggleLayerFuentes").addEventListener("change", async f
   
       // Add GeoJSON layer to the map
       Layer_fuentes = L.geoJSON(data, {
-        style: { color: "black", weight: 1.2, opacity: 0.8 },
+        //style: { color: "black", weight: 1.2, opacity: 0.8 },
+        pointToLayer: (feature, latlng) => {
+            return L.circleMarker(latlng, {
+              radius: 3,             // Size of the circle
+              fillColor: "red",      // Fill color
+              color: "red",          // Border color (optional)
+              weight: 1,             // Border thickness
+              opacity: 1,            // Border opacity
+              fillOpacity: 0.8       // Fill opacity
+            });
+          },
         onEachFeature: (feature, layer) => {
           if (feature.properties && feature.properties.name) {
             layer.bindPopup(feature.properties.name);
@@ -657,4 +796,5 @@ document.getElementById("toggleLayerFuentes").addEventListener("change", async f
 
 loadGeometry();  // Load geometry (subcatchments) initially
 loadYears();  // Populate the dropdown with years
+//setupTypeButtons();
 

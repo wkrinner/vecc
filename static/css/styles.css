@@ -58,14 +58,6 @@ h4 {
     margin-top: 0px;
 }
 
-/*.custom-triangle .triangle {  
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 10px solid blue;   
-}*/
-
 .close-chart-button {
     position: absolute;
     top: -3px;
@@ -94,12 +86,12 @@ h4 {
     position: absolute;
     top: 20%;
     left: 10px;
-    height: 280px;
+    height: 310px;
     background: rgba(255, 255, 255, 0.8);
     padding: 5px;
     border-radius: 5px;
     z-index: 1000;
-    /*border: 2px solid blue; DEBUG: remove later */
+    /*border: 2px solid blue */
 }
 
 .controls div {
@@ -132,7 +124,7 @@ h4 {
 }
 
 .dropdown-row label {
-    width: 80px;
+    width: 70px;
     font-weight: normal;
 }
 
@@ -140,7 +132,7 @@ h4 {
     flex: 1;
     font-size: 14px;
     padding: 4px;
-    width: auto;
+    width: 70px;
 }
 
 .layer-option {
@@ -148,6 +140,10 @@ h4 {
     align-items: center;
     justify-content: space-between;
     width: 150px; 
+}
+
+.layer-option label{
+    margin-left: 10px;   
 }
 
 .leaflet-popup-close-button {
@@ -200,6 +196,39 @@ h4 {
     clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
 }
 
+.type-selector{
+    display: flex;
+    align-items: flex-start;
+    text-align: left;
+    font-size: 14px;
+    position: absolute;
+    bottom: 10px;
+    left: 40%;
+    width: 257px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.type-button {
+    margin: 0 2px;
+    padding: 4px 4px;
+    font-size: 14px;
+    border: 1px solid #888;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.type-button.active {
+    background-color: #2a9d8f;
+    color: white;
+    border-color: #2a9d8f;
+}
+
 /* Styles for intermediate screens (laptop) */
 @media screen and (max-width: 1000px) {
     h4 {
@@ -210,15 +239,10 @@ h4 {
         padding-bottom: 2px; 
     }
 
-    /*#layer-control {
-        font-size: 10px;
-        padding: 3px 10px;
-    }*/
-
     .chart-container {
         position: fixed;
-        bottom: 20px;
-        left: 150px;
+        bottom: 27px;
+        left: 160px;
         width: 255px;
         height: 170px;
     }
@@ -240,12 +264,13 @@ h4 {
     }
 
     .controls {
+        left: 5px;
         font-size: 10px;
         padding: 3px;
-        height: 210px;
-        width: 110px;
+        height: 230px;
+        width: 130px;
         top: 20%;
-        border: 2px solid blue; /* DEBUG: remove later */
+        /*border: 2px solid gray; */
     }
 
     .controls div {
@@ -253,11 +278,11 @@ h4 {
     }
 
     .custom-control {
-        gap: 0px; /* reduced from 8px */
+        gap: 0px; 
     }
 
     .dropdown-row {
-        width: 110px;
+        width: 127px;
         gap: 3px;
     }
 
@@ -267,7 +292,7 @@ h4 {
     }
 
     .dropdown-row select {
-        width: 60px;
+        width: 77px;
         font-size: 10px;
         padding: 1px;
     }
@@ -275,15 +300,21 @@ h4 {
     .layer-option {
         width: 110px;
         margin-bottom: 0px;    
-        line-height: 1; 
+        line-height: .8; 
+    }
+
+    .layer-option label{
+        margin-left: 10px;   
     }
 
     .leaflet-control-zoom {
+        left: -5px;
         transform: scale(0.7); 
         transform-origin: top left; 
     }
 
     .legend {
+        right: -5px;
         font-size: 10px;
         padding: 2px;
     }
@@ -292,4 +323,19 @@ h4 {
         width: 8px;
         height: 8px;
     }
+
+    .type-selector{
+        bottom: 5px;
+        width: 220px;
+        height: 15px;
+        font-size: 10px;
+        padding: 2px;
+    }
+
+    .type-button{
+        font-size: 10px;
+        padding: 1px;
+        width: 70px;
+    }
+
 }

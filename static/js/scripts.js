@@ -6,38 +6,54 @@ let subcatchmentsLayer; // Store geometry
 let chart; // Store Chart.js instance
 
 let selectedSubcatchment = null; // Store last clicked SC_ID
-let currentType = "abs"; // default data type
+//let currentType = "abs"; // default data type
 
 // Add map legend control
 let legend = L.control({ position: "bottomright" });
-
 let additionalLayer_rios;
 
-// Update the legend content based on the selected variable
-function updateLegend(variable){
+// Update the legend content based on the selected variable and type
+function updateLegend(variable, type = "abs"){
     legend.onAdd = function (map) {
         let div = L.DomUtil.create("div", "legend");
-        div.innerHTML = `<b>${variable.toUpperCase()} (mm)</b><br>`;
 
-        let grades = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000];
-        let labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", "1200-1300", "1300-1400", "1400-1500", "1500-1600", "1600-1700", "1700-1800", "1800-1900", "> 1900"];
-
-        for (let i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                `<i style="background:${getColor(grades[i] + 1)}"></i> ${labels[i]}<br>`;
+        if (type === "dif") {
+            div.innerHTML = `<b>Δ ${variable.toUpperCase()} (mm)</b><br>`;
+            const difGrades = [-400, -300, -200, -100, 0, 100, 200, 300, 400];
+            const difLabels = ["< -300", "-300 to -200", "-200 to -100", "-100 to 0", "0", 
+                            "0 to 100", "100 to 200", "200 to 300", ">300"];
+            for (let i = 0; i < difGrades.length; i++) {
+                div.innerHTML += `<i style="background:${getColor(difGrades[i], "dif")}"></i> ${difLabels[i]}<br>`;
+            }
+        } else if (type === "pct") {
+            div.innerHTML = `<b>Δ ${variable.toUpperCase()} (%)</b><br>`;
+            const pctGrades = [-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4];
+            const pctLabels = ["< -30%", "-30% to -20%", "-20% to -10%", "-10% to 0%", "0%", 
+                            "0% to 10%", "10% to 20%", "20% to 30%", "> 30%"];
+            for (let i = 0; i < pctGrades.length; i++) {
+                div.innerHTML += `<i style="background:${getColor(pctGrades[i], "pct")}"></i> ${pctLabels[i]}<br>`;
+            }
+        } else {
+            div.innerHTML = `<b>${variable.toUpperCase()} (mm)</b><br>`;
+            const grades = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000];
+            const labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", "1200-1300", "1300-1400", "1400-1500", "1500-1600", "1600-1700", "1700-1800", "1800-1900", "> 1900"];
+            for (let i = 0; i < grades.length; i++) {
+                div.innerHTML += `<i style="background:${getColor(grades[i] + 1)}"></i> ${labels[i]}<br>`;
+            }
         }
         return div;
     };
 
-    legend.addTo(map);  // Add the legend to the map after initialization
+    legend.addTo(map);  // Add the legend to the map 
 }
 
 // Initialize the app (load geometry, years, scenarios, variables)
-async function initializeApp() {
+/*async function initializeApp() {
     await loadGeometry(); // Ensure geometry is fully loaded before proceeding
     await loadYears();    // Populate years in dropdown
     await loadScenarios(); // Populate scenarios in dropdown
     await loadVariables(); // Populate variables in dropdown
+    await loadSeasons();  // Populate seasons in dropdown
     await loadTypes(); // Populate data types in dropdown
 
     // Define default values for dropdowns 
@@ -47,11 +63,44 @@ async function initializeApp() {
     document.getElementById("typeSelector").value = "abs";
 
     // Update the legend based on the initial selected variable
-    updateLegend("pr");  // This updates the legend with the initial variable
+    updateLegend("pr", "abs");  // This updates the legend with the initial variable
 
     // Ensure the colors are updated for the first load
-    await updateColors("2025");
+    //await updateColors("2025");
+    const defaultYear = await loadYears();
+    if (defaultYear) {
+        console.log(`Loading initial data for year: ${defaultYear}`);
+        await updateColors(defaultYear)
+    }
+}*/
+async function initializeApp() {
+    await loadGeometry(); // Load map features first
 
+    // Load dropdown options and get default selections
+    const defaultYear = await loadYears();
+    const defaultScenario = await loadScenarios();
+    const defaultVariable = await loadVariables();
+    const defaultSeason = await loadSeasons();
+    await loadTypes(); // You could also return a defaultType here if needed
+
+    // Set dropdown values to defaults
+    document.getElementById("yearSelector").value = defaultYear;
+    document.getElementById("scenarioSelector").value = defaultScenario;
+    document.getElementById("variableSelector").value = defaultVariable;
+    document.getElementById("seasonSelector").value = defaultSeason;
+
+    const typeButton = document.querySelector(`.type-button[data-value="abs"]`);
+    if (typeButton) {
+        typeButton.classList.add("active");
+    }
+
+    // Update the legend and color the map
+    updateLegend(defaultVariable, "abs");
+
+    if (defaultYear && defaultScenario && defaultVariable && defaultSeason) {
+        console.log(`Loading initial data for year: ${defaultYear}`);
+        await updateColors(defaultYear);
+    }
 }
 
 // Call the initialization function after defining it
@@ -65,15 +114,18 @@ document.getElementById("scenarioSelector").addEventListener("change", () => {
     updateVisualization()
 });
 document.getElementById("variableSelector").addEventListener("change", (event) => {
-    updateLegend(event.target.value); // Update legend when variable changes
+    updateLegend(event.target.value, type); // Update legend when variable changes
+    updateVisualization();
+});
+document.getElementById("seasonSelector").addEventListener("change", (event) => {
     updateVisualization();
 });
 document.getElementById("typeSelector").addEventListener("change", (event) => {
-    //updateLegend(variable); // Update legend when variable changes
+    //updateLegend(variable, type); // Update legend when variable changes
     updateVisualization();
 });
 
-// Update the map colors based on selected year, scenario and variable
+// Update the map colors based on selected year, scenario, season and variable
 function updateVisualization(){
     const selectedYear = document.getElementById("yearSelector").value;
     updateColors(selectedYear);
@@ -115,13 +167,21 @@ async function loadGeometry() {
 async function updateColors(year) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
-    //const type = document.getElementById("typeSelector").value;  // Get selected data type
-    const activeTypeButton = document.querySelector(".type-button.active");
+    const season = document.getElementById("seasonSelector").value;  // Get selected season
+    const activeTypeButton = document.querySelector(".type-button.active");  // Get selected data type
     const type = activeTypeButton ? activeTypeButton.dataset.value : "abs";
 
+    console.log("scenario:", scenario);  // Debugging
+    console.log("variable:", variable);
+    console.log("year:", year);
+    console.log("season:", season);
+    console.log("type:", type);
+
     try {
-        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}/${type}`);
+        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}/${season}/${type}`);
+        console.log("Fetching:", response.url);
         const mapData = await response.json();
+        //console.log(`Map data for type "${type}":`, mapData);
 
         if (mapData.error) {
             console.error("Error loading variable data:", mapData.error);
@@ -132,62 +192,49 @@ async function updateColors(year) {
             const id = layer.feature.properties.SC_ID;
             const value = mapData[id] || 0; // Default to 0 if missing
             layer.setStyle({
-                fillColor: getColor(value)
+                fillColor: getColor(value, type)
             });
         });
+        updateLegend(variable, type)  
     } catch (error) {
         console.error("Error updating colors:", error);
     }
 }
 
 // Function to get colors based on values
-function getColor(value) {
-    return value > 1900 ? '#3B0066' :  // Dark purple
-           value > 1800 ? '#4A008A' :
-           value > 1700 ? '#5A1DD8' :
-           value > 1600 ? '#6333F7' :
-           value > 1500 ? '#3E5CFA' :
-           value > 1400 ? '#3580F7' :
-           value > 1300 ? '#2FA4F4' :
-           value > 1200 ? '#2AC6E7' :
-           value > 1100 ? '#36D3D0' :
-           value > 1000 ? '#42E0B5' :
-           value > 900  ? '#5FEB9C' :
-           value > 800  ? '#7AF085' :
-           value > 700  ? '#96E86E' :  // First blue-greenish tones
-           value > 600  ? '#B2DC58' :
-           value > 500  ? '#E0BE3C' :
-           value > 400  ? '#E89730' :
-           value > 300  ? '#E06928' :
-           value > 200  ? '#D53C20' :
-           value > 100  ? '#BB1818' :
-                          '#990808';  // Deep red
-}
-
-/*// Function to update time series chart   NOT NEEDED
-function updateTimeSeries() {
-    const scenario = document.getElementById("scenarioSelector").value;
-    const variable = document.getElementById("variableSelector").value;
-    
-    if (!selectedSubcatchment) {
-        console.log("No subcatchment selected.");
-        return;
+function getColor(value, type) {
+    if (type == "dif"){
+        const scale = chroma.scale(['brown', 'yellow', 'white', 'lightgreen', 'darkgreen'])
+                            .domain([-400, -300, -200, -100, 0, 100, 200, 300, 400]);
+            return scale(value).hex();
+    } else if (type == "pct"){
+        const scale = chroma.scale(['brown', 'yellow', 'white', 'lightgreen', 'darkgreen'])
+                            .domain([-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4]);
+            return scale(value).hex();
+    } else {
+        return value > 1900 ? '#3B0066' :  // Dark purple
+            value > 1800 ? '#4A008A' :
+            value > 1700 ? '#5A1DD8' :
+            value > 1600 ? '#6333F7' :
+            value > 1500 ? '#3E5CFA' :
+            value > 1400 ? '#3580F7' :
+            value > 1300 ? '#2FA4F4' :
+            value > 1200 ? '#2AC6E7' :
+            value > 1100 ? '#36D3D0' :
+            value > 1000 ? '#42E0B5' :
+            value > 900  ? '#5FEB9C' :
+            value > 800  ? '#7AF085' :
+            value > 700  ? '#96E86E' :  // First blue-greenish tones
+            value > 600  ? '#B2DC58' :
+            value > 500  ? '#E0BE3C' :
+            value > 400  ? '#E89730' :
+            value > 300  ? '#E06928' :
+            value > 200  ? '#D53C20' :
+            value > 100  ? '#BB1818' :
+                            '#990808';  // Deep red
     }
-
-    fetch(`/timeseries/${scenario}/${variable}/${selectedSubcatchment}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Time series data not found");
-            }
-            return response.text();
-        })
-        .then(csvData => {
-            const parsedData = parseCSVData(csvData);
-            updateChart(parsedData);
-        })
-        .catch(error => console.error("Error fetching time series data:", error));
 }
-*/
+
 // Function to load available years into dropdown
 async function loadYears() {
     try {
@@ -215,15 +262,17 @@ async function loadYears() {
         });
 
         // Set default year to 2025 if available, otherwise use the first available year
-        const defaultYear = years.includes(2025) ? 2025 : years[0];
+        const defaultYear = years.includes("2025") ? 2025 : years[0];
         selector.value = defaultYear;
 
-        console.log(`Loading initial variable data for year: ${defaultYear}`);
+        console.log(`Default year set to: ${defaultYear}`);
+        return defaultYear; 
 
-        await updateColors(defaultYear);  // Ensure colors load only after years are set
+        //await updateColors(defaultYear);  // Ensure colors load only after years are set
 
     } catch (error) {
         console.error("Error loading years:", error);
+        return null;
     }
 }
 
@@ -257,17 +306,25 @@ async function loadScenarios() {
         const defaultScenario = scenarios.includes("ssp585") ? "ssp585" : scenarios[0];
         selector.value = defaultScenario;
 
+        return defaultScenario;
+
         console.log(`Loading initial variable data for scenario: ${defaultScenario}`);
 
-        await updateColors(defaultScenario);  // Ensure colors load only after scenarios are set
+        //await updateColors(selectedYear);  // Ensure colors load only after scenarios are set
 
     } catch (error) {
         console.error("Error loading scenarios:", error);
+        return null;
     }
 }
 
 // Function to load available variables into dropdown
 async function loadVariables() {
+    const variableLabels = {
+        pr: "Precipitación",
+        et: "Evapotranspiración",
+        rh: "Rendimiento hídrico"
+    };
     try {
         const response = await fetch('/variables');
         if (!response.ok) {
@@ -288,7 +345,7 @@ async function loadVariables() {
         variables.forEach(variable => {
             const option = document.createElement("option");
             option.value = variable;
-            option.textContent = variable.toUpperCase();
+            option.textContent = variableLabels[variable] || variable.toUpperCase();
             selector.appendChild(option);
         });
 
@@ -296,23 +353,21 @@ async function loadVariables() {
         const defaultVariable = variables.includes("pr") ? "pr" : variables[0];
         selector.value = defaultVariable;
 
+        return defaultVariable;
+
         console.log(`Loading initial data for variable: ${defaultVariable}`);
 
-        await updateColors(defaultVariable);  // Ensure colors load only after variable is set
+        //await updateColors(selectedYear);  // Ensure colors load only after variable is set
 
     } catch (error) {
         console.error("Error loading variables:", error);
+        return null;
     }
 }
 
 // Function to load available data types 
-/*const typeLabels = {
-    abs: "Valor absoluto",
-    dif: "Variación",
-    pct: "Variación%"
-};*/
 async function loadTypes() {
-    const typeLabels = { // new location, before outside function 
+    const typeLabels = {  
         abs: "Valor absoluto",
         dif: "Variación",
         pct: "Variación%"
@@ -326,9 +381,7 @@ async function loadTypes() {
         const types = await response.json();
         console.log("Types:", loadTypes);  // Debugging Log
 
-        //const selector = document.getElementById("typeSelector");
-        //selector.innerHTML = "";  // Clear previous options
-        const container = document.getElementById("typeSelector"); // new, before selector
+        const container = document.getElementById("typeSelector"); 
         container.innerHTML = "";  // Clear existing buttons
 
         if (types.length === 0) {
@@ -337,50 +390,49 @@ async function loadTypes() {
         }
 
         types.forEach(type => {
-            /*const option = document.createElement("option");
-            option.value = type;
-            option.textContent = typeLabels[type] || type;
-            selector.appendChild(option);*/
-            const button = document.createElement("button");  // new, before option
+            const button = document.createElement("button");  
             button.textContent = typeLabels[type] || type;
             button.className = "type-button";
             button.dataset.value = type;
 
-            button.addEventListener("click", () => {  // new section
+            button.addEventListener("click", () => {  
                 document.querySelectorAll(".type-button").forEach(btn =>
                     btn.classList.remove("active")
                 );
                 button.classList.add("active");
-                updateVisualization();  // or updateColors(...) if you prefer
+                updateVisualization();  
             });
 
-            container.appendChild(button);  // new
+            container.appendChild(button);  
         });
 
         // Set default type to abs if available, otherwise use the first available type
         const defaultType = types.includes("abs") ? "abs" : types[0];
         //selector.value = defaultType;
-        const defaultButton = [...container.children].find(btn => btn.dataset.value === defaultType);  // new
+        const defaultButton = [...container.children].find(btn => btn.dataset.value === defaultType);  
         if (defaultButton) defaultButton.classList.add("active");
+
+        return defaultType;
 
         console.log(`Loading initial data for type: ${defaultType}`);
 
-        await updateColors(defaultType);  // Ensure colors load only after type is set
+        //await updateColors(selectedYear);  // Ensure colors load only after type is set
 
     } catch (error) {
         console.error("Error loading types:", error);
+        return null;
     }
 }
 
 // Function to load available seasons into dropdown
-const seasonLabels = {
-    ann: "Año completo",
-    pri: "Primavera",
-    ver: "Verano",
-    oto: "Otoño",
-    inv: "Invierno"
-};
 async function loadSeasons() {
+    const seasonLabels = {
+        ann: "Año completo",
+        pri: "Primavera",
+        ver: "Verano",
+        oto: "Otoño",
+        inv: "Invierno"
+    };
     try {
         const response = await fetch('/seasons');
         if (!response.ok) {
@@ -388,12 +440,12 @@ async function loadSeasons() {
         }
 
         const seasons = await response.json();
-        console.log("Seasons:", loadSeasons);  // Debugging Log
+        console.log("Seasons in loadSeasons:", seasons);  // Debugging Log
 
         const selector = document.getElementById("seasonSelector");
         selector.innerHTML = "";  // Clear previous options
 
-        if (season.length === 0) {
+        if (seasons.length === 0) {
             console.warn("No seasons found!");
             return;
         }
@@ -409,12 +461,15 @@ async function loadSeasons() {
         const defaultSeason = seasons.includes("ann") ? "ann" : seasons[0];
         selector.value = defaultSeason;
 
+        return defaultSeason;
+
         console.log(`Loading initial data for season: ${defaultSeason}`);
 
-        await updateColors(defaultSeason);  // Ensure colors load only after season is set
+        //await updateColors(selectedYear);  // Ensure colors load only after season is set
 
     } catch (error) {
         console.error("Error loading seasons:", error);
+        return null;
     }
 }
 

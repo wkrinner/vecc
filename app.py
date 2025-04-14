@@ -37,11 +37,12 @@ def get_subcatchments():
     print(f"Received request for GeoJSON file")
     return send_from_directory(geojson_dir, "subcatchments.geojson")
 
-def read_mapdata(scenario, variable, year, type):
-    """Read map data for the selected scenario, variable, year and type (absolute, difference, rel.diff.)"""
+def read_mapdata(scenario, variable, year, season, type):
+    """Read map data for the selected scenario, variable, year, season and type"""
     mapdata = {}
     mapdata_dir = os.path.join(base_mapdata_dir, scenario, variable)
-    csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_ann_{type}.csv")
+    #csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_ann_{type}.csv")
+    csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_{season}_{type}.csv")
 
     if not os.path.exists(csv_file):
         print(f"File {csv_file} not found.")
@@ -72,18 +73,18 @@ def read_mapdata(scenario, variable, year, type):
 
     return mapdata
 
-@app.route("/mapdata/<scenario>/<variable>/<year>/<type>", methods=["GET"])
-def get_mapdata(scenario, variable, year, type):
+@app.route("/mapdata/<scenario>/<variable>/<year>/<season>/<type>", methods=["GET"])
+def get_mapdata(scenario, variable, year, season, type):
     """API route to serve map data dynamically"""
-    print(f"Received request for: Scenario = {scenario}, Variable = {variable}, Year = {year}, Type = {type}")
-    data = read_mapdata(scenario, variable, year, type)
+    print(f"Received request for: Scenario = {scenario}, Variable = {variable}, Year = {year}, Season = {season}, Type = {type}")
+    data = read_mapdata(scenario, variable, year, season, type)
     if not data:
-        return jsonify({"error": f"Map data data for {variable}, {scenario}, {year}, {type} not found"}), 404
+        return jsonify({"error": f"Map data data for {variable}, {scenario}, {year}, {season}, {type} not found"}), 404
     return jsonify(data)
 
-@app.route("/vector/<scenario>/<variable>/<year>/<type>", methods=["GET"])
-def get_vector(scenario, variable, year, type):
-    """Serve the GeoJSON file for the selected scenario, variable, year and type"""
+@app.route("/vector/<scenario>/<variable>/<year>/<season>/<type>", methods=["GET"])
+def get_vector(scenario, variable, year, season, type):
+    """Serve the GeoJSON file for the selected scenario, variable, year, season and type"""
     try:
         geojson_file = f"vector_{year}.geojson"
         geojson_path = os.path.join(geojson_dir, geojson_file)
@@ -105,12 +106,12 @@ def get_vector(scenario, variable, year, type):
         print(f"GeoJSON Data: {geojson_data}")
 
         # Read the map data from the corresponding CSV file
-        mapdata = read_mapdata(scenario, variable, year, type)
+        mapdata = read_mapdata(scenario, variable, year, season, type)
 
         # Attach mapdata values to the GeoJSON features
         for feature in geojson_data['features']:
             codigo = feature['properties']['SC_ID']
-            feature['properties'][f'{variable}_{year}_{type}'] = mapdata.get(codigo, None)
+            feature['properties'][f'{variable}_{year}_{season}_{type}'] = mapdata.get(codigo, None)
 
         # Return the updated GeoJSON with mapdata values
         return jsonify(geojson_data)
@@ -154,6 +155,12 @@ def get_types():
     """Return a list of available data types"""
     types = ["abs", "dif", "pct"]
     return jsonify(types)
+
+@app.route("/seasons", methods=["GET"])
+def get_seasons():
+    """Return a list of available seasons"""
+    seasons = ["ann", "pri", "ver", "oto", "inv"]
+    return jsonify(seasons)
 
 @app.route("/layer_rios", methods=["GET"])
 def get_additional_layer_rios():

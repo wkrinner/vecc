@@ -103,7 +103,7 @@ h4 {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    width: 225px;
+    width: 226px;
 }
 
 .dropdown-row label {
@@ -153,6 +153,17 @@ h4 {
     width: 10px;
     height: 10px;
 }
+
+.leaflet-tooltip.layer-label {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: black;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 1px 1px 2px white;
+    pointer-events: none;
+  }
 
 .legend {
     background: white;

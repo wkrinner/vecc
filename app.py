@@ -119,10 +119,10 @@ def get_vector(scenario, variable, year, season, type):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/timeseries/<scenario>/<variable>/<sc_id>", methods=["GET"])
-def get_timeseries(scenario, variable, sc_id):
+@app.route("/timeseries/<scenario>/<variable>/<sc_id>/<season>", methods=["GET"])
+def get_timeseries(scenario, variable, sc_id, season):
     """Serve the time series CSV data for the selected subcatchment"""
-    csv_path = os.path.join(base_timeseries_dir, scenario, variable, f"{variable}_{sc_id}.csv")
+    csv_path = os.path.join(base_timeseries_dir, scenario, variable, f"{variable}_{sc_id}_{season}.csv")
     print(f"Looking for file: {csv_path}")
 
     try:

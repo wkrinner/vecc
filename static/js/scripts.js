@@ -12,6 +12,21 @@ let selectedSubcatchment = null; // Store last clicked SC_ID
 let legend = L.control({ position: "bottomright" });
 let additionalLayer_rios;
 
+// Function for conversion to title case
+function toTitleCase(str) {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map(word =>
+        word
+          .split("-")
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+          .join("-")
+      )
+      .join(" ");
+  }
+
 // Update the legend content based on the selected variable and type
 function updateLegend(variable, type = "abs"){
     legend.onAdd = function (map) {
@@ -47,32 +62,6 @@ function updateLegend(variable, type = "abs"){
     legend.addTo(map);  // Add the legend to the map 
 }
 
-// Initialize the app (load geometry, years, scenarios, variables)
-/*async function initializeApp() {
-    await loadGeometry(); // Ensure geometry is fully loaded before proceeding
-    await loadYears();    // Populate years in dropdown
-    await loadScenarios(); // Populate scenarios in dropdown
-    await loadVariables(); // Populate variables in dropdown
-    await loadSeasons();  // Populate seasons in dropdown
-    await loadTypes(); // Populate data types in dropdown
-
-    // Define default values for dropdowns 
-    document.getElementById("yearSelector").value = "2025";
-    document.getElementById("scenarioSelector").value = "ssp585";
-    document.getElementById("variableSelector").value = "pr";
-    document.getElementById("typeSelector").value = "abs";
-
-    // Update the legend based on the initial selected variable
-    updateLegend("pr", "abs");  // This updates the legend with the initial variable
-
-    // Ensure the colors are updated for the first load
-    //await updateColors("2025");
-    const defaultYear = await loadYears();
-    if (defaultYear) {
-        console.log(`Loading initial data for year: ${defaultYear}`);
-        await updateColors(defaultYear)
-    }
-}*/
 async function initializeApp() {
     await loadGeometry(); // Load map features first
 
@@ -114,7 +103,7 @@ document.getElementById("scenarioSelector").addEventListener("change", () => {
     updateVisualization()
 });
 document.getElementById("variableSelector").addEventListener("change", (event) => {
-    updateLegend(event.target.value, type); // Update legend when variable changes
+    //updateLegend(event.target.value, type); // Update legend when variable changes
     updateVisualization();
 });
 document.getElementById("seasonSelector").addEventListener("change", (event) => {
@@ -428,10 +417,10 @@ async function loadTypes() {
 async function loadSeasons() {
     const seasonLabels = {
         ann: "Año completo",
-        pri: "Primavera",
-        ver: "Verano",
-        oto: "Otoño",
-        inv: "Invierno"
+        pri: "Primavera (sep-nov)",
+        ver: "Verano (dic-feb)",
+        oto: "Otoño (mar-may)",
+        inv: "Invierno (jun-ago)"
     };
     try {
         const response = await fetch('/seasons');
@@ -477,8 +466,9 @@ async function loadSeasons() {
 async function loadTimeSeriesData(sc_id) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
+    const season = document.getElementById("seasonSelector").value;  // Get selected season
     try {
-        const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}`);
+        const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}/${season}`);
         if (!response.ok){
             throw new Error("Time series data not found");
         }
@@ -748,8 +738,13 @@ document.getElementById("toggleLayerDepartamentos").addEventListener("change", a
       Layer_departamentos = L.geoJSON(data, {
         style: { color: "black", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
         onEachFeature: (feature, layer) => {
-          if (feature.properties && feature.properties.name) {
-            layer.bindPopup(feature.properties.name);
+          if (feature.properties && feature.properties.DEPARTAMEN) {
+            const name = toTitleCase(feature.properties.DEPARTAMEN);
+            layer.bindTooltip(name, {
+                permanent: true,
+                direction: "center",
+                className: "layer-label"
+              }).openTooltip();
           }
         }
       }).addTo(map);
@@ -771,7 +766,13 @@ document.getElementById("toggleLayerAAA").addEventListener("change", async funct
         Layer_AAA = L.geoJSON(data, {
             style: { color: "purple", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
             onEachFeature: (feature, layer) => {
-                if (feature.properties && feature.properties.name) {
+                if (feature.properties && feature.properties.NAME_AAA) {
+                    const name = toTitleCase(feature.properties.NAME_AAA);
+                    layer.bindTooltip(name, {
+                        permanent: true,
+                        direction: "center",
+                        className: "layer-label"
+                      }).openTooltip();
                     layer.bindPopup(feature.properties.name);
                 }
             }

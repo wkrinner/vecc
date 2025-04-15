@@ -170,8 +170,7 @@ async function updateColors(year) {
         const response = await fetch(`/mapdata/${scenario}/${variable}/${year}/${season}/${type}`);
         console.log("Fetching:", response.url);
         const mapData = await response.json();
-        //console.log(`Map data for type "${type}":`, mapData);
-
+        
         if (mapData.error) {
             console.error("Error loading variable data:", mapData.error);
             return;
@@ -595,22 +594,27 @@ function renderChart(data, sc_id) {
                     pointStyle: 'line'
                 },
                 {
-                    label: 'IC 90% Superior',
-                    data: data.upperCIs,
-                    borderColor: 'green',
+                    label: 'Intervalo de confianza 90%',
+                    data: data.lowerCIs,
+                    borderColor: 'rgba(128,128,128,0.3)',
+                    backgroundColor: 'rgba(200, 200, 200, 0.4)', // light grey fill
                     borderWidth: 1,
-                    fill: false,
+                    fill: '+1',
                     pointRadius: 0,
                     pointStyle: 'line'
                 },
                 {
-                    label: 'IC 90% Inferior',
-                    data: data.lowerCIs,
-                    borderColor: 'red',
+                    label: '',
+                    data: data.upperCIs,
+                    borderColor: 'rgba(128,128,128,0.3)',
+                    backgroundColor: 'rgba(200, 200, 200, 0.4)', 
                     borderWidth: 1,
                     fill: false,
                     pointRadius: 0,
-                    pointStyle: 'line'
+                    pointStyle: 'line',
+                    datalabels: false,
+                    showLine: 1
+                    //hidden: true
                 }
             ]
         },
@@ -636,6 +640,10 @@ function renderChart(data, sc_id) {
                         boxWidth: 40,  // Adjust line length in legend
                         font: {
                             size: computedFontSize*.9
+                        },
+                        filter: function(item, chart) {
+                            // Only show legend items for dataset index 0 and 1
+                            return item.datasetIndex !== 2;
                         }
                     }
                 }

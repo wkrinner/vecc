@@ -59,8 +59,8 @@ def read_mapdata(scenario, variable, year, season, type):
 
         print(f"Available columns in {csv_file}: {first_row.keys()}")  # Debugging
 
-        if variable not in first_row:
-            print(f"Error: Expected column '{variable}' not found in CSV. Check column names.")
+        if "value" not in first_row:
+            print(f"Error: Expected column 'value' not found in CSV. Found columns: {first_row.keys()}")
             return {}  # Exit early if the expected column is missing
 
         # Reset file reader after checking the first row
@@ -69,7 +69,7 @@ def read_mapdata(scenario, variable, year, season, type):
         
         for row in reader:
             codigo = row["SC_ID"]
-            mapdata[codigo] = float(row[variable])
+            mapdata[codigo] = float(row["value"])
 
     return mapdata
 

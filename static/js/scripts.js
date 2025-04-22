@@ -173,14 +173,25 @@ async function updateColors(year) {
         
         if (mapData.error) {
             console.error("Error loading variable data:", mapData.error);
+            subcatchmentsLayer.eachLayer(layer => {
+                layer.setStyle({
+                    fillColor: '#d3d3d3',
+                    fillOpacity: 0.4
+                });
+            });
             return;
         }
 
         subcatchmentsLayer.eachLayer(layer => {
             const id = layer.feature.properties.SC_ID;
-            const value = mapData[id] || 0; // Default to 0 if missing
+            //const value = mapData[id] || 0; // Default to 0 if missing
+            const value = mapData[id];
+            const hasValue = value !== null && value !== undefined && !isNaN(value);
+
             layer.setStyle({
-                fillColor: getColor(value, type)
+                //fillColor: getColor(value, type)
+                fillColor: hasValue ? getColor(value, type) : '#d3d3d3',  // Pale grey if missing
+                fillOpacity: hasValue ? 0.8 : 0.4                         // Optional: dim missing value
             });
         });
         updateLegend(variable, type)  
@@ -353,7 +364,7 @@ async function loadVariables() {
     }
 }
 
-// Function to load available data types 
+// Function to load available data types (valor absoluto, variación, variación%) 
 async function loadTypes() {
     const typeLabels = {  
         abs: "Valor absoluto",
@@ -512,7 +523,7 @@ function showChart() {
     closeButton.style.display = "block";  // Ensure the button is visible
 }
 
-// Function to hide the chart
+// Function to hide the time series chart
 function closeChart() {
     const chartContainer = document.getElementById("chartContainer");
     chartContainer.style.display = "none";
@@ -523,7 +534,7 @@ function closeChart() {
     }
 }
 
-// Event listener for the close button
+// Event listener for the time series chart close button
 document.getElementById("closeChartButton").addEventListener("click", function() {
     console.log("Close button clicked");
     closeChart();

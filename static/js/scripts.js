@@ -586,9 +586,19 @@ function renderChart(data, sc_id) {
     // Get computed font size from CSS
     const computedFontSize = parseFloat(getComputedStyle(newCanvas).fontSize) || 12;
 
-    // Get the selected variable and scenario
+    // Get the selected variable, scenario and season
     const variable = document.getElementById("variableSelector").value;  
-    const scenario = document.getElementById("scenarioSelector").value;  
+    const scenario = document.getElementById("scenarioSelector").value; 
+    const season = document.getElementById("seasonSelector").value;
+
+    // Define text for chart title
+    const seasonTextOptions = {
+        'pri': 'Sep-Nov',
+        'ver': 'Dic-Feb',
+        'oto': 'Mar-May',
+        'inv': 'Jun-Ago'
+    };
+    const seasonText = season !== 'ann' ? `- ${seasonTextOptions[season] || ''}` : ''; 
 
     chart = new Chart(ctx, {
         type: 'line',
@@ -635,7 +645,7 @@ function renderChart(data, sc_id) {
             plugins: {
                 title: {
                     display: true,
-                    text: `Escenario: ${scenario.toUpperCase()}  -  Subcuenca: ${sc_id ? sc_id : 'Unknown'}`, // Fallback if sc_id is undefined
+                    text: `Escenario ${scenario.toUpperCase()}  -  Subcuenca ${sc_id ? sc_id : 'Unknown'}  ${seasonText}`, // Fallback if sc_id is undefined
                     font: {
                         size: computedFontSize,
                         weight: 'normal'

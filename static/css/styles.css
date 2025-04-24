@@ -148,10 +148,15 @@ h4 {
 }
 
 .leaflet-popup-close-button {
-    top: -4px; 
+    position: absolute !important; 
+    top: 1px !important; 
     right: 6px;
-    font-size: 12px;     
+    font-size: 11px;     
     line-height: 1;
+    padding: 0;          
+    margin: 0;           
+    /*vertical-align: top; */
+    transform: translateY(-30%);
 }
 
 .leaflet-popup-content-wrapper {
@@ -291,16 +296,15 @@ h4 {
 
     .close-chart-button {
         font-size: 14px;
-        padding: 3px 8px;
     }
 
     .controls {
-        left: 5px;
-        top: 10px;
+        left: 2px;
+        top: 7px;
         font-size: 10px;
         padding: 3px;
         height: 230px;
-        width: 163px;
+        width: 164px;
         /*border: 2px solid gray; */
     }
 
@@ -313,7 +317,7 @@ h4 {
     }
 
     .dropdown-row {
-        width: 162px;
+        width: 163px;
         gap: 3px;
     }
 
@@ -339,8 +343,8 @@ h4 {
     }
 
     .leaflet-control-zoom {
-        left: 170px;
-        top: 4px;
+        left: 165px;
+        top: 0px;
         transform: scale(0.6); 
         transform-origin: top left; 
     }

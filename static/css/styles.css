@@ -193,7 +193,7 @@ h4 {
     padding: 4px;
     border-radius: 3px;
     font-size: 12px;
-    line-height: 14px;
+    line-height: 16px;
     text-align: left;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
@@ -204,6 +204,7 @@ h4 {
     display: inline-block;
     margin-right: 3px;
     border: 1px solid black;
+    vertical-align: middle; 
 }
 
 .trapezoid {

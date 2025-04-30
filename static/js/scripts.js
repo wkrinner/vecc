@@ -1,3 +1,4 @@
+console.log("JS file loaded!");
 // Initialize the map 
 let map = L.map('map').setView([-9.19, -75.0152], 6);  // Centered on Peru
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -50,10 +51,31 @@ function updateLegend(variable, type = "abs"){
             }
         } else {
             div.innerHTML = `<b>${variable.toUpperCase()} (mm)</b><br>`;
-            const grades = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000];
-            const labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", "1200-1300", "1300-1400", "1400-1500", "1500-1600", "1600-1700", "1700-1800", "1800-1900", "> 1900"];
-            for (let i = 0; i < grades.length; i++) {
-                div.innerHTML += `<i style="background:${getColor(grades[i] + 1)}"></i> ${labels[i]}<br>`;
+            const grades = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 
+                1100, 1200, 1300, 1400, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250];
+            const labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", 
+                "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", 
+                "1200-1300", "1300-1400", "1400-1500", "1500-1750", "1750-2000", "2000-2250", 
+                "2250-2500", "2500-2750", "2750-3000", "3000-3250", ">3250"];
+            console.log(`Grades length: ${grades.length}`);
+            console.log(`Lables length: ${labels.length}`);
+            /*for (let i = 0; i < grades.length; i++) {
+                div.innerHTML += `<i style="background:${getColor(grades[i] + 1, "abs")}"></i> ${labels[i]}<br>`;
+            }
+            // Add final ">3000" manually
+            div.innerHTML += `<i style="background:${getColor(3100, "abs")}"></i> ${labels[labels.length - 1]}<br>`; */
+            for (let i = 0; i < labels.length; i++) {
+                let testVal;
+                if (i === 0) {
+                    testVal = 0;  // for "<100"
+                } else if (i === labels.length - 1) {
+                    testVal = 3100;  // for ">3000"
+                } else {
+                    testVal = grades[i] + 1;  // just above each bin threshold
+                }
+                const color = getColor(testVal, "abs");
+                console.log(`Label: ${labels[i]}, Value: ${testVal}, Color: ${color}`);
+                div.innerHTML += `<i style="background:${color}"></i> ${labels[i]}<br>`;
             }
         }
         return div;
@@ -133,7 +155,7 @@ async function loadGeometry() {
 
     return new Promise((resolve) => {
         subcatchmentsLayer = L.geoJSON(geojsonData, {
-            style: { weight: 0.5, color: '#666', fillOpacity: 0.7 },
+            style: { weight: 0.5, color: '#666', opacity: 0.5, fillOpacity: 0.7 },
             onEachFeature: (feature, layer) => {
                 layer.on('click', function () {
                     selectedSubcatchment = feature.properties.SC_ID; 
@@ -211,26 +233,29 @@ function getColor(value, type) {
                             .domain([-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4]);
             return scale(value).hex();
     } else {
-        return value > 1900 ? '#3B0066' :  // Dark purple
-            value > 1800 ? '#4A008A' :
-            value > 1700 ? '#5A1DD8' :
-            value > 1600 ? '#6333F7' :
-            value > 1500 ? '#3E5CFA' :
-            value > 1400 ? '#3580F7' :
-            value > 1300 ? '#2FA4F4' :
-            value > 1200 ? '#2AC6E7' :
-            value > 1100 ? '#36D3D0' :
-            value > 1000 ? '#42E0B5' :
-            value > 900  ? '#5FEB9C' :
-            value > 800  ? '#7AF085' :
-            value > 700  ? '#96E86E' :  // First blue-greenish tones
-            value > 600  ? '#B2DC58' :
-            value > 500  ? '#E0BE3C' :
-            value > 400  ? '#E89730' :
-            value > 300  ? '#E06928' :
-            value > 200  ? '#D53C20' :
-            value > 100  ? '#BB1818' :
-                            '#990808';  // Deep red
+        return value > 3250 ? '#cc33ff' :  // Vivid magenta
+            value > 3000 ? '#7f31a1' :  // Moderate violet
+            value > 2750 ? '#3B0066' :  // Very dark Violet
+            value > 2500 ? '#1e1a7d' :  // Dark blue
+            value > 2250 ? '#2757bc' :  // Strong blue
+            value > 2000 ? '#3E5CFA' :  // Bright blue
+            value > 1750 ? '#3580F7' :  // Bright blue
+            value > 1500 ? '#2FA4F4' :  // Bright blue
+            value > 1400 ? '#2AC6E7' :
+            value > 1300 ? '#36D3D0' :
+            value > 1200 ? '#42E0B5' :
+            value > 1100 ? '#5FEB9C' :
+            value > 1000 ? '#7AF085' :
+            value > 900  ? '#96E86E' :  // First blue-greenish tones
+            value > 800  ? '#B2DC58' :
+            value > 700  ? '#e0f505' :
+            value > 600  ? '#fefa00' :  // Yellow
+            value > 500  ? '#f7bd3d' :
+            value > 400  ? '#E06928' :
+            value > 300  ? '#D53C20' :
+            value > 200  ? '#BB1818' :
+            value > 100  ? '#990808' :  // Deep red
+                           '#4d0000' ;  // Very dark red
     }
 }
 

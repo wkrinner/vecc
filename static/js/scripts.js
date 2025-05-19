@@ -74,7 +74,7 @@ function updateLegend(variable, type = "abs"){
                     testVal = grades[i] + 1;  // just above each bin threshold
                 }
                 const color = getColor(testVal, "abs");
-                console.log(`Label: ${labels[i]}, Value: ${testVal}, Color: ${color}`);
+                //console.log(`Label: ${labels[i]}, Value: ${testVal}, Color: ${color}`);
                 div.innerHTML += `<i style="background:${color}"></i> ${labels[i]}<br>`;
             }
         }

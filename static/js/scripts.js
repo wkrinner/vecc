@@ -901,8 +901,8 @@ document.getElementById("toggleLayerFuentes").addEventListener("change", async f
             });
           },
         onEachFeature: (feature, layer) => {
-          if (feature.properties && feature.properties.name) {
-            layer.bindPopup(feature.properties.name);
+          if (feature.properties && feature.properties.Fuentes) {
+            layer.bindPopup(feature.properties.Fuentes);
           }
         }
       }).addTo(map);

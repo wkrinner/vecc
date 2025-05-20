@@ -141,7 +141,7 @@ def get_years():
 @app.route("/variables", methods=["GET"])
 def get_variables():
     """Return a list of available variables"""
-    variables = ["pr", "et", "rh"]
+    variables = ["pr", "et", "rh", "gw"]
     return jsonify(variables)
 
 @app.route("/scenarios", methods=["GET"])
@@ -197,6 +197,12 @@ def get_layer_fuentes():
     """Serve a GeoJSON layer for fuentes"""
     print("Request received for GeoJSON layer fuentes")
     return send_from_directory(geojson_dir, "fuentes.geojson")
+
+@app.route("/layer_ciudades", methods=["GET"])
+def get_layer_ciudades():
+    """Serve a GeoJSON layer for ciudades"""
+    print("Request received for GeoJSON layer ciudades")
+    return send_from_directory(geojson_dir, "ciudades.geojson")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=10000, debug=True)

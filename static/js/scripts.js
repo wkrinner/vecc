@@ -347,7 +347,8 @@ async function loadVariables() {
     const variableLabels = {
         pr: "Precipitación",
         et: "Evapotranspiración",
-        rh: "Rendimiento hídrico"
+        rh: "Rendimiento hídrico",
+        gw: "Percolación"
     };
     try {
         const response = await fetch('/variables');
@@ -859,8 +860,16 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
             });
         },
         onEachFeature: (feature, layer) => {
-          if (feature.properties && feature.properties.name) {
-            layer.bindPopup(feature.properties.name);
+          if (feature.properties && feature.properties.NOMBRE) {
+            const Name = toTitleCase(feature.properties.NOMBRE);
+            layer.bindTooltip(Name, {
+                permanent: true,
+                direction: "right",
+                offset: [2, 5],
+                className: "layer-label"
+              }).openTooltip();
+            layer.bindPopup(feature.properties.NOMBRE);
+
           }
         }
       }).addTo(map);
@@ -900,6 +909,46 @@ document.getElementById("toggleLayerFuentes").addEventListener("change", async f
     } else {
       if (map.hasLayer(Layer_fuentes)) {
         map.removeLayer(Layer_fuentes);
+      }
+    }
+});
+
+// Additional layer "Ciudades"
+document.getElementById("toggleLayerCiudades").addEventListener("change", async function (ciudades) {
+    if (ciudades.target.checked) {
+      // Fetch GeoJSON from the Flask backend
+      const response = await fetch("/layer_ciudades");
+      const data = await response.json();
+  
+      // Add GeoJSON layer to the map
+      Layer_ciudades = L.geoJSON(data, {
+        //style: { color: "black", weight: 1.2, opacity: 0.8 },
+        pointToLayer: (feature, latlng) => {
+            return L.circleMarker(latlng, {
+              radius: 3,             // Size of the circle
+              fillColor: "yellow",      // Fill color
+              color: "black",          // Border color (optional)
+              weight: 1,             // Border thickness
+              opacity: 1,            // Border opacity
+              fillOpacity: 0.8       // Fill opacity
+            });
+          },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties && feature.properties.Name) {
+            const Name = toTitleCase(feature.properties.Name);
+            layer.bindTooltip(Name, {
+                permanent: true,
+                direction: "right",
+                offset: [-3, 0],
+                className: "layer-label"
+              }).openTooltip();
+            layer.bindPopup(feature.properties.Name);
+          }
+        }
+      }).addTo(map);
+    } else {
+      if (map.hasLayer(Layer_ciudades)) {
+        map.removeLayer(Layer_ciudades);
       }
     }
 });

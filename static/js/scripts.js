@@ -117,7 +117,7 @@ async function initializeApp() {
 // Call the initialization function after defining it
 initializeApp();
 
-// Event listeners for year, scenario, variable and data type selection change (to update map, chart and legend)
+// Event listeners for year, scenario and variable selection change (to update map and chart)
 document.getElementById("yearSelector").addEventListener("change", (event) => {
     updateColors(event.target.value);
 });
@@ -152,6 +152,8 @@ function updateVisualization(){
 async function loadGeometry() {
     const response = await fetch('/subcatchments');
     const geojsonData = await response.json();
+
+    
 
     return new Promise((resolve) => {
         subcatchmentsLayer = L.geoJSON(geojsonData, {
@@ -956,7 +958,7 @@ document.getElementById("toggleLayerCiudades").addEventListener("change", async 
     }
 });
 
-loadGeometry();  // Load geometry (subcatchments) initially
+//loadGeometry();  // Load geometry (subcatchments) initially
 loadYears();  // Populate the dropdown with years
 //setupTypeButtons();
 

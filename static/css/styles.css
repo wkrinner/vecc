@@ -38,6 +38,18 @@ h4 {
     overflow: hidden;
 }
 
+/*.controls {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    height: 70px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;
+}*/
+
 .chart-container {
     position: fixed;
     bottom: 20px;
@@ -260,7 +272,7 @@ h4 {
     border-color: #2a9d8f;
 }
 
-/* Styles for medium-size (laptop) screens */
+/* Styles for laptop screens */
 @media screen and (max-width: 1000px) {
     .main-header {
         padding: 6px 12px;

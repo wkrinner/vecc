@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 console.log("JS file loaded!");
+=======
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 // Initialize the map 
 let map = L.map('map').setView([-9.19, -75.0152], 6);  // Centered on Peru
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -7,6 +10,7 @@ let subcatchmentsLayer; // Store geometry
 let chart; // Store Chart.js instance
 
 let selectedSubcatchment = null; // Store last clicked SC_ID
+<<<<<<< HEAD
 //let currentType = "abs"; // default data type
 
 // Add map legend control
@@ -77,10 +81,29 @@ function updateLegend(variable, type = "abs"){
                 //console.log(`Label: ${labels[i]}, Value: ${testVal}, Color: ${color}`);
                 div.innerHTML += `<i style="background:${color}"></i> ${labels[i]}<br>`;
             }
+=======
+
+// Add map legend control
+let legend = L.control({ position: "bottomright" });
+
+// Update the legend content based on the selected variable
+function updateLegend(variable){
+    legend.onAdd = function (map) {
+        let div = L.DomUtil.create("div", "legend");
+        div.innerHTML = `<b>${variable.toUpperCase()} (mm)</b><br>`;
+
+        let grades = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000];
+        let labels = ["<100", "100-200","200-300", "300-400", "400-500", "500-600", "600-700","700-800", "800-900","900-1000", "1000-1100", "1100-1200", "1200-1300", "1300-1400", "1400-1500", "1500-1600", "1600-1700", "1700-1800", "1800-1900", "> 1900"];
+
+        for (let i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                `<i style="background:${getColor(grades[i] + 1)}"></i> ${labels[i]}<br>`;
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
         }
         return div;
     };
 
+<<<<<<< HEAD
     legend.addTo(map);  // Add the legend to the map 
 }
 
@@ -112,12 +135,38 @@ async function initializeApp() {
         console.log(`Loading initial data for year: ${defaultYear}`);
         await updateColors(defaultYear);
     }
+=======
+    legend.addTo(map);  // Add the legend to the map after initialization
+}
+
+// Initialize the app (load geometry, years, scenarios, variables)
+async function initializeApp() {
+    await loadGeometry(); // Ensure geometry is fully loaded before proceeding
+    await loadYears();    // Populate years in dropdown
+    await loadScenarios(); // Populate scenarios in dropdown
+    await loadVariables(); // Populate variables in dropdown
+
+    // Define default values for dropdowns 
+    document.getElementById("yearSelector").value = "2025";
+    document.getElementById("scenarioSelector").value = "ssp585";
+    document.getElementById("variableSelector").value = "pr";
+
+    // Update the legend based on the initial selected variable
+    updateLegend("pr");  // This updates the legend with the initial variable
+
+    // Ensure the colors are updated for the first load
+    await updateColors("2025");
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 }
 
 // Call the initialization function after defining it
 initializeApp();
 
+<<<<<<< HEAD
 // Event listeners for year, scenario, variable and data type selection change (to update map, chart and legend)
+=======
+// Event listeners for year, scenario and variable selection change (to update map and chart)
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 document.getElementById("yearSelector").addEventListener("change", (event) => {
     updateColors(event.target.value);
 });
@@ -125,6 +174,7 @@ document.getElementById("scenarioSelector").addEventListener("change", () => {
     updateVisualization()
 });
 document.getElementById("variableSelector").addEventListener("change", (event) => {
+<<<<<<< HEAD
     //updateLegend(event.target.value, type); // Update legend when variable changes
     updateVisualization();
 });
@@ -137,6 +187,13 @@ document.getElementById("typeSelector").addEventListener("change", (event) => {
 });
 
 // Update the map colors based on selected year, scenario, season and variable
+=======
+    updateLegend(event.target.value); // Update legend when variable changes
+    updateVisualization();
+});
+
+// Update the map colors based on selected year, scenario and variable
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 function updateVisualization(){
     const selectedYear = document.getElementById("yearSelector").value;
     updateColors(selectedYear);
@@ -155,7 +212,11 @@ async function loadGeometry() {
 
     return new Promise((resolve) => {
         subcatchmentsLayer = L.geoJSON(geojsonData, {
+<<<<<<< HEAD
             style: { weight: 0.5, color: '#666', opacity: 0.5, fillOpacity: 0.7 },
+=======
+            style: { weight: 0.5, color: '#666', fillOpacity: 0.7 },
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
             onEachFeature: (feature, layer) => {
                 layer.on('click', function () {
                     selectedSubcatchment = feature.properties.SC_ID; 
@@ -178,6 +239,7 @@ async function loadGeometry() {
 async function updateColors(year) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
+<<<<<<< HEAD
     const season = document.getElementById("seasonSelector").value;  // Get selected season
     const activeTypeButton = document.querySelector(".type-button.active");  // Get selected data type
     const type = activeTypeButton ? activeTypeButton.dataset.value : "abs";
@@ -201,11 +263,21 @@ async function updateColors(year) {
                     fillOpacity: 0.4
                 });
             });
+=======
+
+    try {
+        const response = await fetch(`/mapdata/${scenario}/${variable}/${year}`);
+        const mapData = await response.json();
+
+        if (mapData.error) {
+            console.error("Error loading variable data:", mapData.error);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
             return;
         }
 
         subcatchmentsLayer.eachLayer(layer => {
             const id = layer.feature.properties.SC_ID;
+<<<<<<< HEAD
             //const value = mapData[id] || 0; // Default to 0 if missing
             const value = mapData[id];
             const hasValue = value !== null && value !== undefined && !isNaN(value);
@@ -217,12 +289,20 @@ async function updateColors(year) {
             });
         });
         updateLegend(variable, type)  
+=======
+            const value = mapData[id] || 0; // Default to 0 if missing
+            layer.setStyle({
+                fillColor: getColor(value)
+            });
+        });
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     } catch (error) {
         console.error("Error updating colors:", error);
     }
 }
 
 // Function to get colors based on values
+<<<<<<< HEAD
 function getColor(value, type) {
     if (type == "dif"){
         const scale = chroma.scale(['brown', 'yellow', 'white', 'lightgreen', 'darkgreen'])
@@ -257,6 +337,53 @@ function getColor(value, type) {
             value > 100  ? '#990808' :  // Deep red
                            '#4d0000' ;  // Very dark red
     }
+=======
+function getColor(value) {
+    return value > 1900 ? '#3B0066' :  // Dark purple
+           value > 1800 ? '#4A008A' :
+           value > 1700 ? '#5A1DD8' :
+           value > 1600 ? '#6333F7' :
+           value > 1500 ? '#3E5CFA' :
+           value > 1400 ? '#3580F7' :
+           value > 1300 ? '#2FA4F4' :
+           value > 1200 ? '#2AC6E7' :
+           value > 1100 ? '#36D3D0' :
+           value > 1000 ? '#42E0B5' :
+           value > 900  ? '#5FEB9C' :
+           value > 800  ? '#7AF085' :
+           value > 700  ? '#96E86E' :  // First blue-greenish tones
+           value > 600  ? '#B2DC58' :
+           value > 500  ? '#E0BE3C' :
+           value > 400  ? '#E89730' :
+           value > 300  ? '#E06928' :
+           value > 200  ? '#D53C20' :
+           value > 100  ? '#BB1818' :
+                          '#990808';  // Deep red
+}
+
+// Function to update tome series chart
+function updateTimeSeries() {
+    const scenario = document.getElementById("scenarioSelector").value;
+    const variable = document.getElementById("variableSelector").value;
+    
+    if (!selectedSubcatchment) {
+        console.log("No subcatchment selected.");
+        return;
+    }
+
+    fetch(`/timeseries/${scenario}/${variable}/${selectedSubcatchment}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Time series data not found");
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            const parsedData = parseCSVData(csvData);
+            updateChart(parsedData);
+        })
+        .catch(error => console.error("Error fetching time series data:", error));
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 }
 
 // Function to load available years into dropdown
@@ -286,6 +413,7 @@ async function loadYears() {
         });
 
         // Set default year to 2025 if available, otherwise use the first available year
+<<<<<<< HEAD
         const defaultYear = years.includes("2025") ? 2025 : years[0];
         selector.value = defaultYear;
 
@@ -297,6 +425,17 @@ async function loadYears() {
     } catch (error) {
         console.error("Error loading years:", error);
         return null;
+=======
+        const defaultYear = years.includes(2025) ? 2025 : years[0];
+        selector.value = defaultYear;
+
+        console.log(`Loading initial variable data for year: ${defaultYear}`);
+
+        await updateColors(defaultYear);  // Ensure colors load only after years are set
+
+    } catch (error) {
+        console.error("Error loading years:", error);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     }
 }
 
@@ -322,7 +461,11 @@ async function loadScenarios() {
         scenarios.forEach(scenario => {
             const option = document.createElement("option");
             option.value = scenario;
+<<<<<<< HEAD
             option.textContent = scenario.toUpperCase();
+=======
+            option.textContent = scenario;
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
             selector.appendChild(option);
         });
 
@@ -330,6 +473,7 @@ async function loadScenarios() {
         const defaultScenario = scenarios.includes("ssp585") ? "ssp585" : scenarios[0];
         selector.value = defaultScenario;
 
+<<<<<<< HEAD
         return defaultScenario;
 
         console.log(`Loading initial variable data for scenario: ${defaultScenario}`);
@@ -339,17 +483,28 @@ async function loadScenarios() {
     } catch (error) {
         console.error("Error loading scenarios:", error);
         return null;
+=======
+        console.log(`Loading initial variable data for scenario: ${defaultScenario}`);
+
+        await updateColors(defaultScenario);  // Ensure colors load only after scenarios are set
+
+    } catch (error) {
+        console.error("Error loading scenarios:", error);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     }
 }
 
 // Function to load available variables into dropdown
 async function loadVariables() {
+<<<<<<< HEAD
     const variableLabels = {
         pr: "Precipitación",
         et: "Evapotranspiración",
         rh: "Rendimiento hídrico",
         per: "Percolación"
     };
+=======
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     try {
         const response = await fetch('/variables');
         if (!response.ok) {
@@ -370,7 +525,11 @@ async function loadVariables() {
         variables.forEach(variable => {
             const option = document.createElement("option");
             option.value = variable;
+<<<<<<< HEAD
             option.textContent = variableLabels[variable] || variable.toUpperCase();
+=======
+            option.textContent = variable;
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
             selector.appendChild(option);
         });
 
@@ -378,6 +537,7 @@ async function loadVariables() {
         const defaultVariable = variables.includes("pr") ? "pr" : variables[0];
         selector.value = defaultVariable;
 
+<<<<<<< HEAD
         return defaultVariable;
 
         console.log(`Loading initial data for variable: ${defaultVariable}`);
@@ -495,6 +655,14 @@ async function loadSeasons() {
     } catch (error) {
         console.error("Error loading seasons:", error);
         return null;
+=======
+        console.log(`Loading initial data for variable: ${defaultVariable}`);
+
+        await updateColors(defaultVariable);  // Ensure colors load only after variable is set
+
+    } catch (error) {
+        console.error("Error loading variables:", error);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     }
 }
 
@@ -502,9 +670,14 @@ async function loadSeasons() {
 async function loadTimeSeriesData(sc_id) {
     const scenario = document.getElementById("scenarioSelector").value;  // Get selected scenario
     const variable = document.getElementById("variableSelector").value;  // Get selected variable
+<<<<<<< HEAD
     const season = document.getElementById("seasonSelector").value;  // Get selected season
     try {
         const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}/${season}`);
+=======
+    try {
+        const response = await fetch(`/timeseries/${scenario}/${variable}/${sc_id}`);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
         if (!response.ok){
             throw new Error("Time series data not found");
         }
@@ -525,7 +698,11 @@ async function loadTimeSeriesData(sc_id) {
 
 // Function to show time series chart
 function showChart() {
+<<<<<<< HEAD
     const chartContainer = document.getElementById("chartContainer");
+=======
+    const chartContainer = document.getElementById("chart-container");
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     if (chartContainer) {
         chartContainer.style.display = "block";
         console.log("Chart container shown:", chartContainer.style.display);
@@ -541,17 +718,28 @@ function showChart() {
         console.error('Chart container not found!');
     }
 
+<<<<<<< HEAD
     document.getElementById("chartContainer").style.display = "block";
     console.log("Chart container shown:", document.getElementById("chartContainer").style.display); // Debugging log
+=======
+    document.getElementById("chart-container").style.display = "block";
+    console.log("Chart container shown:", document.getElementById("chart-container").style.display); // Debugging log
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
     // Make sure the "x" button is visible 
     const closeButton = document.getElementById("closeChartButton");
     closeButton.style.display = "block";  // Ensure the button is visible
 }
 
+<<<<<<< HEAD
 // Function to hide the time series chart
 function closeChart() {
     const chartContainer = document.getElementById("chartContainer");
+=======
+// Function to hide the chart
+function closeChart() {
+    const chartContainer = document.getElementById("chart-container");
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     chartContainer.style.display = "none";
 
     // Optionally destroy the chart to free resources
@@ -560,7 +748,11 @@ function closeChart() {
     }
 }
 
+<<<<<<< HEAD
 // Event listener for the time series chart close button
+=======
+// Event listener for the close button
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 document.getElementById("closeChartButton").addEventListener("click", function() {
     console.log("Close button clicked");
     closeChart();
@@ -589,7 +781,11 @@ function parseCSV(csvData) {
 
 // Function to render the time series chart using Chart.js
 function renderChart(data, sc_id) {
+<<<<<<< HEAD
     const canvasContainer = document.getElementById('chartContainer');
+=======
+    const canvasContainer = document.getElementById('chart-container');
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
     // Clear only the canvas, preserving the close button
     const oldCanvas = document.getElementById('timeSeriesChart');
@@ -600,7 +796,10 @@ function renderChart(data, sc_id) {
     // Create a new canvas element
     const newCanvas = document.createElement('canvas');
     newCanvas.id = 'timeSeriesChart';
+<<<<<<< HEAD
     newCanvas.className = 'chart-font'; 
+=======
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     canvasContainer.appendChild(newCanvas);
 
     const ctx = newCanvas.getContext('2d');
@@ -609,6 +808,7 @@ function renderChart(data, sc_id) {
     if (chart) {
         chart.destroy();
     }
+<<<<<<< HEAD
     // Get computed font size from CSS
     const computedFontSize = parseFloat(getComputedStyle(newCanvas).fontSize) || 12;
 
@@ -625,6 +825,12 @@ function renderChart(data, sc_id) {
         'inv': 'Jun-Ago'
     };
     const seasonText = season !== 'ann' ? `- ${seasonTextOptions[season] || ''}` : ''; 
+=======
+
+    // Get the selected variable and scenario
+    const variable = document.getElementById("variableSelector").value;  
+    const scenario = document.getElementById("scenarioSelector").value;  
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
     chart = new Chart(ctx, {
         type: 'line',
@@ -632,7 +838,11 @@ function renderChart(data, sc_id) {
             labels: data.dates,
             datasets: [
                 {
+<<<<<<< HEAD
                     label: 'Mediana',
+=======
+                    label: 'Mediano',
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                     data: data.medians,
                     borderColor: 'blue',
                     borderWidth: 1,
@@ -641,16 +851,25 @@ function renderChart(data, sc_id) {
                     pointStyle: 'line'
                 },
                 {
+<<<<<<< HEAD
                     label: 'Intervalo de confianza 90%',
                     data: data.lowerCIs,
                     borderColor: 'rgba(128,128,128,0.3)',
                     backgroundColor: 'rgba(200, 200, 200, 0.4)', // light grey fill
                     borderWidth: 1,
                     fill: '+1',
+=======
+                    label: 'IC 90% Superior',
+                    data: data.upperCIs,
+                    borderColor: 'green',
+                    borderWidth: 1,
+                    fill: false,
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                     pointRadius: 0,
                     pointStyle: 'line'
                 },
                 {
+<<<<<<< HEAD
                     label: '',
                     data: data.upperCIs,
                     borderColor: 'rgba(128,128,128,0.3)',
@@ -662,6 +881,15 @@ function renderChart(data, sc_id) {
                     datalabels: false,
                     showLine: 1
                     //hidden: true
+=======
+                    label: 'IC 90% Inferior',
+                    data: data.lowerCIs,
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    fill: false,
+                    pointRadius: 0,
+                    pointStyle: 'line'
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                 }
             ]
         },
@@ -671,9 +899,15 @@ function renderChart(data, sc_id) {
             plugins: {
                 title: {
                     display: true,
+<<<<<<< HEAD
                     text: `Escenario ${scenario.toUpperCase()}  -  Subcuenca ${sc_id ? sc_id : 'Unknown'}  ${seasonText}`, // Fallback if sc_id is undefined
                     font: {
                         size: computedFontSize,
+=======
+                    text: `Escenario: ${scenario.toUpperCase()}  -  Subcuenca: ${sc_id ? sc_id : 'Unknown'}`, // Fallback if sc_id is undefined
+                    font: {
+                        size: 12,
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                         weight: 'normal'
                     },
                     padding: {
@@ -686,11 +920,15 @@ function renderChart(data, sc_id) {
                         usePointStyle: true, // Use line style in legend instead of boxes
                         boxWidth: 40,  // Adjust line length in legend
                         font: {
+<<<<<<< HEAD
                             size: computedFontSize*.9
                         },
                         filter: function(item, chart) {
                             // Only show legend items for dataset index 0 and 1
                             return item.datasetIndex !== 2;
+=======
+                            size: 11
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                         }
                     }
                 }
@@ -702,6 +940,7 @@ function renderChart(data, sc_id) {
                         unit: 'year',
                         tooltipFormat: 'YYYY'
                     },
+<<<<<<< HEAD
                     ticks: {
                         font: {
                             size: computedFontSize
@@ -723,6 +962,16 @@ function renderChart(data, sc_id) {
                         font: {
                             size: computedFontSize
                         }                        
+=======
+                    title: {
+                        display: false  // Remove axis title "Date"
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: `${variable.toUpperCase()} (mm)`,                        
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
                     }
                 }
             }
@@ -732,6 +981,7 @@ function renderChart(data, sc_id) {
 
 // Update the legend when the variable selector changes
 document.getElementById("variableSelector").addEventListener("change", function() {
+<<<<<<< HEAD
     legend.addTo(map);
 });
 
@@ -954,9 +1204,22 @@ document.getElementById("toggleLayerCiudades").addEventListener("change", async 
         map.removeLayer(Layer_ciudades);
       }
     }
+=======
+    //legend.remove();  // Remove the old legend
+    legend.addTo(map);
+});
+
+// Ensure the map loads with colors
+document.addEventListener("DOMContentLoaded", () => {
+    const selectedYear = document.getElementById("yearSelector").value;
+    updateColors(selectedYear);
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 });
 
 loadGeometry();  // Load geometry (subcatchments) initially
 loadYears();  // Populate the dropdown with years
+<<<<<<< HEAD
 //setupTypeButtons();
+=======
+>>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 

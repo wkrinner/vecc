@@ -173,6 +173,7 @@ h4 {
 
 .leaflet-popup-content-wrapper {
     padding: 2px 5px; 
+    box-sizing: border-box;
 }
 
 .leaflet-popup-content {

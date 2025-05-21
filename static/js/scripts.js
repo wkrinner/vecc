@@ -732,7 +732,6 @@ function renderChart(data, sc_id) {
 
 // Update the legend when the variable selector changes
 document.getElementById("variableSelector").addEventListener("change", function() {
-    //legend.remove();  // Remove the old legend     NOT NEEDED
     legend.addTo(map);
 });
 
@@ -747,8 +746,9 @@ document.getElementById("toggleLayerRios").addEventListener("change", async func
     Layer_rios = L.geoJSON(data, {
       style: { color: "blue", weight: 1.2, opacity: 0.8 },
       onEachFeature: (feature, layer) => {
-        if (feature.properties && feature.properties.name) {
-          layer.bindPopup(feature.properties.name);
+        if (feature.properties && feature.properties.TEXTO_MAP) {
+            //layer.bindPopup(feature.properties.TEXTO_MAP);
+            layer.bindPopup(`<div class="popup-content"> ${feature.properties.TEXTO_MAP} </div>`, { minWidth: 80, maxWidth: 200 });
         }
       }
     }).addTo(map);
@@ -828,7 +828,7 @@ document.getElementById("toggleLayerAAA").addEventListener("change", async funct
                         direction: "center",
                         className: "layer-label"
                       }).openTooltip();
-                    layer.bindPopup(feature.properties.name);
+                    // layer.bindPopup(feature.properties.name);
                 }
             }
         }).addTo(map);
@@ -868,7 +868,8 @@ document.getElementById("toggleLayerRepresas").addEventListener("change", async 
                 offset: [2, 5],
                 className: "layer-label"
               }).openTooltip();
-            layer.bindPopup(feature.properties.NOMBRE);
+            //layer.bindPopup(feature.properties.NOMBRE);
+            layer.bindPopup(`<div class="popup-content"> ${feature.properties.NOMBRE} </div>`, { minWidth: 80, maxWidth: 200 });
 
           }
         }
@@ -902,7 +903,8 @@ document.getElementById("toggleLayerFuentes").addEventListener("change", async f
           },
         onEachFeature: (feature, layer) => {
           if (feature.properties && feature.properties.Fuentes) {
-            layer.bindPopup(feature.properties.Fuentes);
+            //layer.bindPopup(feature.properties.Fuentes);
+            layer.bindPopup(`<div class="popup-content"> ${feature.properties.Fuentes} </div>`, { minWidth: 80, maxWidth: 200 });
           }
         }
       }).addTo(map);
@@ -942,7 +944,8 @@ document.getElementById("toggleLayerCiudades").addEventListener("change", async 
                 offset: [-3, 0],
                 className: "layer-label"
               }).openTooltip();
-            layer.bindPopup(feature.properties.Name);
+            //layer.bindPopup(feature.properties.Name);
+            layer.bindPopup(`<div class="popup-content"> ${feature.properties.Name} </div>`, { minWidth: 80, maxWidth: 200 });
           }
         }
       }).addTo(map);

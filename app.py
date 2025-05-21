@@ -17,12 +17,8 @@ geojson_dir = os.path.join(BASE_DIR, "data", "geojson")
 base_mapdata_dir = os.path.join(BASE_DIR, "data", "mapdata")
 base_timeseries_dir = os.path.join(BASE_DIR, "data", "timeseries")
 
-<<<<<<< HEAD
 # Debugging: Check if paths are correct
 print("GeoJSON Directory:", geojson_dir)  
-=======
-print("GeoJSON Directory:", geojson_dir)  # Debugging: Check if paths are correct
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 print("Map Data Directory:", base_mapdata_dir)
 print("Timeseries Directory:", base_timeseries_dir)
 
@@ -41,20 +37,12 @@ def get_subcatchments():
     print(f"Received request for GeoJSON file")
     return send_from_directory(geojson_dir, "subcatchments.geojson")
 
-<<<<<<< HEAD
 def read_mapdata(scenario, variable, year, season, type):
     """Read map data for the selected scenario, variable, year, season and type"""
     mapdata = {}
     mapdata_dir = os.path.join(base_mapdata_dir, scenario, variable)
     #csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_ann_{type}.csv")
     csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_{season}_{type}.csv")
-=======
-def read_mapdata(scenario, variable, year):
-    """Read map data for the selected scenario, variable and year"""
-    mapdata = {}
-    mapdata_dir = os.path.join(base_mapdata_dir, scenario, variable)
-    csv_file = os.path.join(mapdata_dir, f"{variable}_{year}_all_subcatchments.csv")
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
     if not os.path.exists(csv_file):
         print(f"File {csv_file} not found.")
@@ -71,13 +59,8 @@ def read_mapdata(scenario, variable, year):
 
         print(f"Available columns in {csv_file}: {first_row.keys()}")  # Debugging
 
-<<<<<<< HEAD
         if "value" not in first_row:
             print(f"Error: Expected column 'value' not found in CSV. Found columns: {first_row.keys()}")
-=======
-        if variable not in first_row:
-            print(f"Error: Expected column '{variable}' not found in CSV. Check column names.")
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
             return {}  # Exit early if the expected column is missing
 
         # Reset file reader after checking the first row
@@ -86,7 +69,6 @@ def read_mapdata(scenario, variable, year):
         
         for row in reader:
             codigo = row["SC_ID"]
-<<<<<<< HEAD
             mapdata[codigo] = float(row["value"])
 
     return mapdata
@@ -103,24 +85,6 @@ def get_mapdata(scenario, variable, year, season, type):
 @app.route("/vector/<scenario>/<variable>/<year>/<season>/<type>", methods=["GET"])
 def get_vector(scenario, variable, year, season, type):
     """Serve the GeoJSON file for the selected scenario, variable, year, season and type"""
-=======
-            mapdata[codigo] = float(row[variable])
-
-    return mapdata
-
-@app.route("/mapdata/<scenario>/<variable>/<year>", methods=["GET"])
-def get_mapdata(scenario, variable, year):
-    """API route to serve map data dynamically"""
-    print(f"Received request for: Scenario = {scenario}, Variable = {variable}, Year = {year}")
-    data = read_mapdata(scenario, variable, year)
-    if not data:
-        return jsonify({"error": f"Map data data for {variable}, {scenario}, {year} not found"}), 404
-    return jsonify(data)
-
-@app.route("/vector/<scenario>/<variable>/<year>", methods=["GET"])
-def get_vector(scenario, variable, year):
-    """Serve the GeoJSON file for the selected variable, year and scenario"""
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     try:
         geojson_file = f"vector_{year}.geojson"
         geojson_path = os.path.join(geojson_dir, geojson_file)
@@ -142,20 +106,12 @@ def get_vector(scenario, variable, year):
         print(f"GeoJSON Data: {geojson_data}")
 
         # Read the map data from the corresponding CSV file
-<<<<<<< HEAD
         mapdata = read_mapdata(scenario, variable, year, season, type)
-=======
-        mapdata = read_mapdata(scenario, variable, year)
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
         # Attach mapdata values to the GeoJSON features
         for feature in geojson_data['features']:
             codigo = feature['properties']['SC_ID']
-<<<<<<< HEAD
             feature['properties'][f'{variable}_{year}_{season}_{type}'] = mapdata.get(codigo, None)
-=======
-            feature['properties'][f'{variable}_{year}'] = mapdata.get(codigo, None)
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 
         # Return the updated GeoJSON with mapdata values
         return jsonify(geojson_data)
@@ -163,17 +119,10 @@ def get_vector(scenario, variable, year):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-<<<<<<< HEAD
 @app.route("/timeseries/<scenario>/<variable>/<sc_id>/<season>", methods=["GET"])
 def get_timeseries(scenario, variable, sc_id, season):
     """Serve the time series CSV data for the selected subcatchment"""
     csv_path = os.path.join(base_timeseries_dir, scenario, variable, f"{variable}_{sc_id}_{season}.csv")
-=======
-@app.route("/timeseries/<scenario>/<variable>/<sc_id>", methods=["GET"])
-def get_timeseries(scenario, variable, sc_id):
-    """Serve the time series CSV data for the selected subcatchment"""
-    csv_path = os.path.join(base_timeseries_dir, scenario, variable, f"{variable}_{sc_id}.csv")
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     print(f"Looking for file: {csv_path}")
 
     try:
@@ -192,11 +141,7 @@ def get_years():
 @app.route("/variables", methods=["GET"])
 def get_variables():
     """Return a list of available variables"""
-<<<<<<< HEAD
     variables = ["pr", "et", "rh", "per"]
-=======
-    variables = ["pr", "et", "rh"]
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
     return jsonify(variables)
 
 @app.route("/scenarios", methods=["GET"])
@@ -205,7 +150,6 @@ def get_scenarios():
     scenarios = ["ssp126", "ssp585"]
     return jsonify(scenarios)
 
-<<<<<<< HEAD
 @app.route("/types", methods=["GET"])
 def get_types():
     """Return a list of available data types"""
@@ -260,7 +204,5 @@ def get_layer_ciudades():
     print("Request received for GeoJSON layer ciudades")
     return send_from_directory(geojson_dir, "ciudades.geojson")
 
-=======
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=10000, debug=True)

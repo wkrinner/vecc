@@ -141,7 +141,7 @@ def get_years():
 @app.route("/variables", methods=["GET"])
 def get_variables():
     """Return a list of available variables"""
-    variables = ["pr", "et", "rh", "gw"]
+    variables = ["pr", "et", "rh", "per"]
     return jsonify(variables)
 
 @app.route("/scenarios", methods=["GET"])

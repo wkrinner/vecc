@@ -348,7 +348,7 @@ async function loadVariables() {
         pr: "Precipitación",
         et: "Evapotranspiración",
         rh: "Rendimiento hídrico",
-        gw: "Percolación"
+        per: "Percolación"
     };
     try {
         const response = await fetch('/variables');

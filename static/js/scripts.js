@@ -153,8 +153,6 @@ async function loadGeometry() {
     const response = await fetch('/subcatchments');
     const geojsonData = await response.json();
 
-    
-
     return new Promise((resolve) => {
         subcatchmentsLayer = L.geoJSON(geojsonData, {
             style: { weight: 0.5, color: '#666', opacity: 0.5, fillOpacity: 0.7 },
@@ -787,24 +785,25 @@ document.getElementById("toggleLayerCarreteras").addEventListener("change", asyn
 // Additional layer "Departamentos"
 document.getElementById("toggleLayerDepartamentos").addEventListener("change", async function (depa) {
     if (depa.target.checked) {
-      // Fetch GeoJSON from the Flask backend
-      const response = await fetch("/layer_departamentos");
-      const data = await response.json();
-  
-      // Add GeoJSON layer to the map
-      Layer_departamentos = L.geoJSON(data, {
-        style: { color: "black", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
-        onEachFeature: (feature, layer) => {
-          if (feature.properties && feature.properties.DEPARTAMEN) {
-            const name = toTitleCase(feature.properties.DEPARTAMEN);
-            layer.bindTooltip(name, {
-                permanent: true,
-                direction: "center",
-                className: "layer-label"
-              }).openTooltip();
-          }
-        }
-      }).addTo(map);
+        // Fetch GeoJSON from the Flask backend
+        const response = await fetch("/layer_departamentos");
+        const data = await response.json();
+    
+        // Add GeoJSON layer to the map
+        Layer_departamentos = L.geoJSON(data, {
+            style: { color: "black", weight: 1.2, opacity: 0.8, fillColor: "transparent", fillOpacity: 0 },
+            onEachFeature: (feature, layer) => {
+            if (feature.properties && feature.properties.DEPARTAMEN) {
+                const name = toTitleCase(feature.properties.DEPARTAMEN);
+                layer.bindTooltip(name, {
+                    permanent: true,
+                    direction: "center",
+                    className: "layer-label"
+                }).openTooltip();
+            }
+            }
+        }).addTo(map);
+
     } else {
       if (map.hasLayer(Layer_departamentos)) {
         map.removeLayer(Layer_departamentos);

@@ -1,6 +1,6 @@
 ## [0.3] - 2025-05-23
 ### Added
-- Revised version: data for entire Peru, several issues fixed, correction confidence interval 
+- Revised version: data for entire Peru, 4 variables (pr, et, rh, per), several issues fixed, correction confidence interval 
 
 ## [0.2] - 2025-04-24
 ### Added

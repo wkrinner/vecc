@@ -1,5 +1,5 @@
 console.log("JS file loaded!");
-// Initialize the map 
+// Initialize the map   
 let map = L.map('map').setView([-9.19, -75.0152], 6);  // Centered on Peru
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 

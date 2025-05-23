@@ -1,12 +1,11 @@
-# Changelog
+## [0.3] - 2025-05-23
+### Added
+- Revised version: data for entire Peru, several issues fixed, correction confidence interval 
 
-<<<<<<< HEAD
 ## [0.2] - 2025-04-24
 ### Added
 - Revised version: added dropdowns, additional layers, data type selector; data pr, rh and et for Mantaro catchment
 
-=======
->>>>>>> bf18e732913b448042224a5faf9b56a468d71e8b
 ## [0.1] - 2025-04-01
 ### Added
 - First preview release
